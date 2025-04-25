@@ -273,6 +273,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Car valuation routes
+  app.post('/api/valuations', async (req, res) => {
+    try {
+      const data = insertCarValuationSchema.parse(req.body);
+      
+      // Calculate offer amount based on the pricing logic
+      const baseValue = 7000; // This should be fetched from a market data API
+      const quickSaleDiscount = baseValue * 0.05;
+      const afterQuickSale = baseValue - quickSaleDiscount;
+      const taxDeduction = afterQuickSale * 0.07;
+      const afterTax = afterQuickSale - taxDeduction;
+      
+      let conditionDeduction = 0;
+      if (data.condition === 'poor') {
+        conditionDeduction = afterTax * 0.70;
+      } else if (data.condition === 'fair') {
+        conditionDeduction = afterTax * 0.40;
+      } else if (data.condition === 'good') {
+        conditionDeduction = afterTax * 0.15;
+      }
+      
+      const finalOffer = Math.round(afterTax - conditionDeduction);
+      
+      // Set offer expiry to 7 days from now
+      const offerExpiry = new Date();
+      offerExpiry.setDate(offerExpiry.getDate() + 7);
+      
+      // Insert the valuation into the database
+      const valuation = await storage.createValuation(data, finalOffer);
+      
+      res.json({
+        success: true,
+        valuation: valuation,
+      });
+    } catch (error) {
+      console.error('Error creating valuation:', error);
+      res.status(400).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to create valuation',
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

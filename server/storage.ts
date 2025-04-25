@@ -1,6 +1,7 @@
 import { users, type User, type InsertUser } from "@shared/schema";
 import { carValuations, type CarValuation, type InsertCarValuation } from "@shared/schema";
 import { addDays } from "date-fns";
+import { db } from "../db";
 
 export interface IStorage {
   // User methods
@@ -15,92 +16,69 @@ export interface IStorage {
   acceptValuation(id: number): Promise<CarValuation | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private valuations: Map<number, CarValuation>;
-  private userIdCounter: number;
-  private valuationIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.valuations = new Map();
-    this.userIdCounter = 1;
-    this.valuationIdCounter = 1;
-  }
-
+export class SQLiteStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const result = await db.select().from(users).where(users.id.equals(id)).limit(1);
+    return result[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const result = await db.select().from(users).where(users.username.equals(username)).limit(1);
+    return result[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    const result = await db.insert(users).values(insertUser).returning();
+    return result[0];
   }
 
   // Car valuation methods
   async getValuation(id: number): Promise<CarValuation | undefined> {
-    return this.valuations.get(id);
+    const result = await db.select().from(carValuations).where(carValuations.id.equals(id)).limit(1);
+    return result[0];
   }
 
   async getValuationsByEmail(email: string): Promise<CarValuation[]> {
-    return Array.from(this.valuations.values()).filter(
-      (valuation) => valuation.email === email
-    );
+    return await db.select().from(carValuations).where(carValuations.email.equals(email));
   }
 
-  async createValuation(
-    data: InsertCarValuation, 
-    offerAmount: number
-  ): Promise<CarValuation> {
-    const id = this.valuationIdCounter++;
-    const now = new Date();
-    const offerExpiry = addDays(now, 7); // Offer valid for 7 days
-    
-    const valuation: CarValuation = {
+  async createValuation(data: InsertCarValuation, offerAmount: number): Promise<CarValuation> {
+    const offerExpiry = new Date();
+    offerExpiry.setDate(offerExpiry.getDate() + 7);
+
+    const result = await db.insert(carValuations).values({
       ...data,
-      id,
       offerAmount,
-      offerExpiry,
-      accepted: false,
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    this.valuations.set(id, valuation);
-    return valuation;
+      offerExpiry: offerExpiry.toISOString(),
+    }).returning();
+
+    return result[0];
   }
 
   async acceptValuation(id: number): Promise<CarValuation | undefined> {
-    const valuation = this.valuations.get(id);
+    const valuation = await this.getValuation(id);
     
     if (!valuation) {
       return undefined;
     }
     
     // Check if offer is expired
-    if (valuation.offerExpiry < new Date()) {
+    if (new Date(valuation.offerExpiry) < new Date()) {
       throw new Error("Offer has expired");
     }
     
     // Accept the offer
-    const updatedValuation: CarValuation = {
-      ...valuation,
-      accepted: true,
-      updatedAt: new Date(),
-    };
+    const result = await db.update(carValuations)
+      .set({ 
+        accepted: true,
+        updatedAt: new Date().toISOString()
+      })
+      .where(carValuations.id.equals(id))
+      .returning();
     
-    this.valuations.set(id, updatedValuation);
-    return updatedValuation;
+    return result[0];
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new SQLiteStorage();

@@ -6,11 +6,13 @@ import NotFound from "@/pages/not-found";
 import HomePage from "@/pages/HomePage";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { CarValuationForm } from './components/CarValuationForm';
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={HomePage} />
+      <Route path="/valuation" component={CarValuationForm} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
