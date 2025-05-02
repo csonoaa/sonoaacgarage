@@ -1,13 +1,16 @@
 {
-  "name": "rest-express",
+  "name": "car-market-valuator",
   "version": "1.0.0",
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && npm run build:server",
-    "build:server": "mkdir -p api && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=api/index.js",
-    "start": "NODE_ENV=production node api/index.js",
+    "dev": "concurrently \"npm:dev:*\"",
+    "dev:client": "vite",
+    "dev:server": "tsx watch server/index.ts",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "tsup api/index.ts --format esm",
+    "start": "node dist/server/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push"
   },
