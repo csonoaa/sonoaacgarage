@@ -7,6 +7,9 @@ import { z } from "zod";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { addDays } from "date-fns";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import cors from "cors";
 
 // Helper function to calculate car value
 function calculateCarValue(data: any): number {
@@ -95,35 +98,61 @@ function calculateCarValue(data: any): number {
   return offerAmount;
 }
 
+// Security middleware
+const securityMiddleware = (app: Express) => {
+  app.use(helmet());
+  app.use(cors({
+    origin: process.env.CORS_ORIGIN || "https://carmarketvaluator.com",
+    credentials: true
+  }));
+};
+
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later"
+});
+
 // Validation schema for car valuation request
 const carValuationRequestSchema = z.object({
   // Car details
-  make: z.string().min(1, "Make is required"),
-  model: z.string().min(1, "Model is required"),
-  year: z.string().min(1, "Year is required"),
-  trim: z.string().optional(),
-  bodyType: z.string().min(1, "Body type is required"),
-  mileage: z.string().min(1, "Mileage is required"),
-  transmission: z.string().min(1, "Transmission is required"),
-  drivetrain: z.string().min(1, "Drivetrain is required"),
-  exteriorColor: z.string().min(1, "Color is required"),
+  make: z.string().min(1, "Make is required").max(50),
+  model: z.string().min(1, "Model is required").max(50),
+  year: z.string().min(1, "Year is required").refine(val => {
+    const year = parseInt(val);
+    return year >= 1900 && year <= new Date().getFullYear();
+  }, {
+    message: "Invalid year"
+  }),
+  trim: z.string().max(50).optional(),
+  bodyType: z.string().min(1, "Body type is required").max(20),
+  mileage: z.string().min(1, "Mileage is required").refine(val => {
+    const mileage = parseInt(val);
+    return mileage >= 0 && mileage <= 1000000;
+  }, {
+    message: "Invalid mileage"
+  }),
+  transmission: z.string().min(1, "Transmission is required").max(20),
+  drivetrain: z.string().min(1, "Drivetrain is required").max(20),
+  exteriorColor: z.string().min(1, "Color is required").max(30),
   vin: z.string().optional().refine(val => !val || validateVIN(val), {
     message: "Invalid VIN format"
   }),
   
   // Condition
-  drivable: z.string().min(1, "Drivable status is required"),
-  condition: z.string().min(1, "Condition is required"),
-  additionalInfo: z.string().optional(),
+  drivable: z.string().min(1, "Drivable status is required").max(3),
+  condition: z.string().min(1, "Condition is required").max(20),
+  additionalInfo: z.string().max(1000).optional(),
   
   // Contact info
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().min(1, "Email is required").refine(isValidEmail, {
+  firstName: z.string().min(1, "First name is required").max(50),
+  lastName: z.string().min(1, "Last name is required").max(50),
+  email: z.string().min(1, "Email is required").max(100).refine(isValidEmail, {
     message: "Invalid email format"
   }),
-  phone: z.string().min(10, "Phone number is required"),
-  zipCode: z.string().min(1, "ZIP code is required").refine(isValidZipCode, {
+  phone: z.string().min(10, "Phone number is required").max(20),
+  zipCode: z.string().min(1, "ZIP code is required").max(10).refine(isValidZipCode, {
     message: "Invalid ZIP code format"
   }),
   termsAgreed: z.boolean().refine(val => val === true, {
@@ -132,8 +161,11 @@ const carValuationRequestSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply security middleware
+  securityMiddleware(app);
+
   // Car valuation endpoint
-  app.post("/api/car/valuation", async (req: Request, res: Response) => {
+  app.post("/api/car/valuation", apiLimiter, async (req: Request, res: Response) => {
     try {
       console.log("Received valuation request:", req.body);
       
@@ -178,6 +210,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: valuation.id,
           offerAmount: valuation.offerAmount,
           offerExpiry: valuation.offerExpiry,
+          carDetails: {
+            make: valuation.make,
+            model: valuation.model,
+            year: valuation.year,
+            mileage: valuation.mileage
+          }
         }
       });
     } catch (error) {
@@ -200,48 +238,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Accept car offer endpoint
-  app.post("/api/car/accept-offer", async (req: Request, res: Response) => {
+  app.post("/api/car/accept-offer", apiLimiter, async (req: Request, res: Response) => {
     try {
-      const { carData, conditionData, contactData, offer } = req.body;
+      const { valuationId } = req.body;
       
-      if (!carData || !conditionData || !contactData || !offer) {
+      if (!valuationId) {
         return res.status(400).json({
           success: false,
-          message: "Missing required data"
+          message: "Valuation ID is required"
         });
       }
       
-      // For demonstration, we'll create a new valuation and mark it as accepted
-      const valuationData = insertCarValuationSchema.parse({
-        make: carData.make,
-        model: carData.model,
-        year: carData.year,
-        trim: carData.trim,
-        bodyType: carData.bodyType,
-        mileage: carData.mileage,
-        transmission: carData.transmission,
-        drivetrain: carData.drivetrain,
-        exteriorColor: carData.exteriorColor,
-        vin: carData.vin,
-        drivable: conditionData.drivable,
-        condition: conditionData.condition,
-        additionalInfo: conditionData.additionalInfo,
-        firstName: contactData.firstName,
-        lastName: contactData.lastName,
-        email: contactData.email,
-        phone: contactData.phone,
-        zipCode: contactData.zipCode
-      });
+      const valuation = await storage.acceptValuation(valuationId);
       
-      const valuation = await storage.createValuation(valuationData, offer.offerAmount);
-      
-      // Mark as accepted
-      await storage.acceptValuation(valuation.id);
+      if (!valuation) {
+        return res.status(404).json({
+          success: false,
+          message: "Valuation not found or offer expired"
+        });
+      }
       
       return res.status(200).json({
         success: true,
         message: "Offer accepted successfully",
-        pickupScheduled: true
+        pickupScheduled: true,
+        valuation: {
+          id: valuation.id,
+          offerAmount: valuation.offerAmount,
+          offerExpiry: valuation.offerExpiry
+        }
       });
     } catch (error) {
       console.error("Error accepting offer:", error);

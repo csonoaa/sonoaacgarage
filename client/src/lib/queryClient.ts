@@ -12,7 +12,7 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.carmarketvaluator.com';
   const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
   
   console.log(`Making API request to: ${fullUrl}`);
@@ -21,10 +21,12 @@ export async function apiRequest(
   try {
     const res = await fetch(fullUrl, {
       method,
-      headers: data ? { 
+      headers: { 
         "Content-Type": "application/json",
-        "Accept": "application/json"
-      } : {},
+        "Accept": "application/json",
+        "X-API-Key": process.env.NEXT_PUBLIC_API_KEY || '',
+        "X-Requested-With": "XMLHttpRequest"
+      },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
     });
@@ -46,6 +48,30 @@ export async function apiRequest(
     console.error('API request error:', error);
     throw error;
   }
+}
+
+// Add rate limiting and retry logic
+export async function retryableApiRequest(
+  method: string,
+  url: string,
+  data?: unknown,
+  maxRetries = 3,
+  delay = 1000
+): Promise<Response> {
+  let lastError;
+  
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await apiRequest(method, url, data);
+    } catch (error) {
+      lastError = error;
+      if (i < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+      }
+    }
+  }
+  
+  throw lastError;
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
