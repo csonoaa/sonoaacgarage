@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/static-build",
+      "use": "@vercel/next",
       "config": {
         "distDir": "dist/public"
       }
@@ -22,5 +22,8 @@
       "src": "/(.*)",
       "dest": "dist/public/$1"
     }
-  ]
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://sonoaacgarage.vercel.app"
+  }
 } 
