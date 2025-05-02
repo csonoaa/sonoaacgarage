@@ -96,34 +96,7 @@ export function CarValuationForm() {
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-3xl font-bold mb-8">Sell Your Car Fast</h1>
       
-      {/* Price Breakdown */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <h2 className="text-xl font-semibold mb-4">Your Offer Breakdown</h2>
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <span>Base Market Value:</span>
-            <span>${priceBreakdown.baseValue.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-green-600">
-            <span>Quick Sale Discount (5%):</span>
-            <span>-${priceBreakdown.quickSaleDiscount.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-red-600">
-            <span>Tax Deduction (7%):</span>
-            <span>-${priceBreakdown.taxDeduction.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-red-600">
-            <span>Condition Adjustment:</span>
-            <span>-${priceBreakdown.conditionDeduction.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between font-bold text-lg border-t pt-2">
-            <span>Final Offer:</span>
-            <span>${priceBreakdown.finalOffer.toFixed(2)}</span>
-          </div>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Vehicle Information */}
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Vehicle Information</h2>

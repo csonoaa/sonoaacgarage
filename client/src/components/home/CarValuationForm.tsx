@@ -152,7 +152,13 @@ export function CarValuationForm() {
       };
 
       // Submit to API
-      await apiRequest("POST", "/api/car/valuation", fullFormData);
+      const response = await apiRequest("POST", "/api/car/valuation", fullFormData);
+      
+      if (!response.ok) {
+        throw new Error('Failed to get offer');
+      }
+
+      const offerData = await response.json();
       
       setContactData(data);
       setShowOfferResult(true);
@@ -160,7 +166,7 @@ export function CarValuationForm() {
     } catch (error) {
       toast({
         title: "Error",
-        description: "There was a problem submitting your information. Please try again.",
+        description: "There was a problem getting your offer. Please try again.",
         variant: "destructive"
       });
       console.error("Form submission error:", error);
@@ -290,23 +296,38 @@ export function CarValuationForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Make</FormLabel>
-                          <Select
-                            onValueChange={(value) => handleMakeChange(value)}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Make" />
-                              </SelectTrigger>
+                          <div className="flex gap-2">
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Type or select make"
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  handleMakeChange(e.target.value);
+                                }}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              {carMakes.map((make) => (
-                                <SelectItem key={make.id} value={make.id}>
-                                  {make.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            <Select
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                handleMakeChange(value);
+                              }}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Select Make" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {carMakes.map((make) => (
+                                  <SelectItem key={make.id} value={make.id}>
+                                    {make.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -318,24 +339,38 @@ export function CarValuationForm() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Model</FormLabel>
-                          <Select
-                            onValueChange={(value) => handleModelChange(value)}
-                            defaultValue={field.value}
-                            disabled={availableModels.length === 0}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select Model" />
-                              </SelectTrigger>
+                          <div className="flex gap-2">
+                            <FormControl className="flex-1">
+                              <Input
+                                placeholder="Type or select model"
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  handleModelChange(e.target.value);
+                                }}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              {availableModels.map((model) => (
-                                <SelectItem key={model.id} value={model.id}>
-                                  {model.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            <Select
+                              onValueChange={(value) => {
+                                field.onChange(value);
+                                handleModelChange(value);
+                              }}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-[180px]">
+                                  <SelectValue placeholder="Select Model" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {availableModels.map((model) => (
+                                  <SelectItem key={model.id} value={model.id}>
+                                    {model.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
                           <FormMessage />
                         </FormItem>
                       )}
