@@ -1,11 +1,8 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { VercelRequest, VercelResponse } from '@vercel/node';
-import { storage } from '../server/storage';
 import { z } from 'zod';
-import { fromZodError } from 'zod-validation-error';
-import rateLimit from 'express-rate-limit';
 
 // Create express app
 const app = express();
@@ -15,18 +12,10 @@ app.use(helmet({
   contentSecurityPolicy: false
 }));
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: '*',
   credentials: true
 }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Rate limiting
-const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later"
-});
 
 // Validation schema for car valuation request
 const carValuationRequestSchema = z.object({
@@ -94,67 +83,73 @@ function calculateCarValue(data: any): number {
   return offerAmount;
 }
 
-// Car valuation endpoint
-app.post("/api/car/valuation", apiLimiter, async (req, res) => {
-  try {
-    console.log("Received valuation request:", req.body);
-    
-    // Validate request data
-    const validatedData = carValuationRequestSchema.parse(req.body);
-    console.log("Validated data:", validatedData);
-    
-    // Calculate car value
-    const offerAmount = calculateCarValue(validatedData);
-    console.log("Calculated offer amount:", offerAmount);
-    
-    // Set offer expiry to 7 days from now
-    const offerExpiry = new Date();
-    offerExpiry.setDate(offerExpiry.getDate() + 7);
-    
-    // Return the offer
-    return res.status(201).json({
-      success: true,
-      valuation: {
-        offerAmount,
-        offerExpiry,
-        carDetails: {
-          make: validatedData.make,
-          model: validatedData.model,
-          year: validatedData.year,
-          mileage: validatedData.mileage
-        }
+// Direct serverless function handler for Vercel
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version');
+
+  // Handle OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Car valuation endpoint
+  if (req.method === 'POST' && req.url?.includes('/api/car/valuation')) {
+    try {
+      console.log("Received valuation request:", req.body);
+      
+      // Validate request data
+      const validationResult = carValuationRequestSchema.safeParse(req.body);
+      
+      if (!validationResult.success) {
+        return res.status(400).json({
+          success: false,
+          message: "Validation error",
+          errors: validationResult.error.issues
+        });
       }
-    });
-  } catch (error) {
-    console.error("Error processing valuation request:", error);
-    
-    if (error instanceof z.ZodError) {
-      const validationError = fromZodError(error);
-      return res.status(400).json({
+      
+      const validatedData = validationResult.data;
+      console.log("Validated data:", validatedData);
+      
+      // Calculate car value
+      const offerAmount = calculateCarValue(validatedData);
+      console.log("Calculated offer amount:", offerAmount);
+      
+      // Set offer expiry to 7 days from now
+      const offerExpiry = new Date();
+      offerExpiry.setDate(offerExpiry.getDate() + 7);
+      
+      // Return the offer
+      return res.status(201).json({
+        success: true,
+        valuation: {
+          offerAmount,
+          offerExpiry,
+          carDetails: {
+            make: validatedData.make,
+            model: validatedData.model,
+            year: validatedData.year,
+            mileage: validatedData.mileage
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error processing valuation request:", error);
+      return res.status(500).json({
         success: false,
-        message: "Validation error",
-        errors: validationError.details
+        message: "Server error while processing car valuation"
       });
     }
-    
-    return res.status(500).json({
-      success: false,
-      message: "Server error while processing car valuation"
-    });
   }
-});
-
-// Vercel serverless function handler
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Forward the request to Express app
-  return new Promise((resolve, reject) => {
-    app(req, res, (err) => {
-      if (err) {
-        console.error('Express error:', err);
-        reject(err);
-        return;
-      }
-      resolve(undefined);
-    });
+  
+  // Handle 404
+  return res.status(404).json({
+    success: false,
+    message: "API endpoint not found"
   });
 } 
