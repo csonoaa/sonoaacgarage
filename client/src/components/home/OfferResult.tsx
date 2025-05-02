@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,13 +17,84 @@ interface OfferResultProps {
 }
 
 export function OfferResult({ carData, conditionData, contactData }: OfferResultProps) {
+  const [offerAmount, setOfferAmount] = useState<number | null>(null);
+  const [marketAverage, setMarketAverage] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [acceptingOffer, setAcceptingOffer] = useState(false);
   const [emailingSelf, setEmailingSelf] = useState(false);
   const { toast } = useToast();
 
-  // Calculate the car valuation
-  const offer = calculateCarValuation(carData, conditionData);
-  
+  useEffect(() => {
+    const calculateOffer = async () => {
+      try {
+        // Get market average from API
+        const response = await apiRequest("POST", "/api/car/market-value", {
+          make: carData.make,
+          model: carData.model,
+          year: carData.year,
+          mileage: carData.mileage,
+          trim: carData.trim
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to get market value');
+        }
+
+        const data = await response.json();
+        const marketValue = data.marketValue;
+        setMarketAverage(marketValue);
+
+        // Calculate offer based on condition
+        let finalOffer = marketValue;
+        
+        if (conditionData.drivable === "no") {
+          // Non-drivable vehicles
+          finalOffer = Math.random() * 200 + 500; // Random amount between $500-$700
+        } else {
+          // Drivable vehicles
+          switch (conditionData.condition) {
+            case "excellent":
+              finalOffer = marketValue * 0.93; // -7%
+              break;
+            case "good":
+              finalOffer = marketValue * 0.65; // -35%
+              break;
+            case "fair":
+              finalOffer = marketValue * 0.45; // -55%
+              break;
+            case "poor":
+              finalOffer = marketValue * 0.45; // -55%
+              break;
+          }
+        }
+
+        setOfferAmount(finalOffer);
+      } catch (error) {
+        console.error("Error calculating offer:", error);
+        toast({
+          title: "Error",
+          description: "There was a problem calculating your offer. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    calculateOffer();
+  }, [carData, conditionData, toast]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Calculating Your Offer...</h2>
+          <p className="text-neutral-600">Please wait while we determine the best offer for your vehicle.</p>
+        </div>
+      </div>
+    );
+  }
+
   const makeName = getMakeName(carData.make);
   const modelName = getModelName(carData.model);
 
@@ -36,7 +107,7 @@ export function OfferResult({ carData, conditionData, contactData }: OfferResult
         carData,
         conditionData,
         contactData,
-        offer
+        offer: offerAmount
       });
       
       toast({
@@ -65,7 +136,7 @@ export function OfferResult({ carData, conditionData, contactData }: OfferResult
         email: contactData.email,
         carData,
         conditionData,
-        offer
+        offer: offerAmount
       });
       
       toast({
@@ -132,10 +203,10 @@ export function OfferResult({ carData, conditionData, contactData }: OfferResult
               <div className="md:w-1/3 text-center md:border-l md:pl-6 flex flex-col items-center">
                 <span className="text-neutral-600 text-sm">Our Offer:</span>
                 <div className="text-4xl font-bold text-primary mt-2 mb-3">
-                  {formatCurrency(offer.offerAmount)}
+                  {formatCurrency(offerAmount)}
                 </div>
                 <span className="text-sm bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-full">
-                  Valid for {offer.offerValidDays} days
+                  Valid for {offerAmount ? (offerAmount / marketAverage) * 100 : 0}% of Market Average
                 </span>
               </div>
             </div>

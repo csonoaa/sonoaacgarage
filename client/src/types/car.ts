@@ -19,13 +19,18 @@ export interface CarFormData {
   make: string;
   model: string;
   year: string;
-  trim: string;
+  trim?: string;
   bodyType: string;
   mileage: string;
   transmission: string;
   drivetrain: string;
   exteriorColor: string;
-  vin: string;
+  vin?: string;
+  exteriorCondition: string;
+  interiorCondition: string;
+  modifications?: string;
+  serviceHistory: string;
+  accidentHistory: string;
 }
 
 export interface CarConditionData {

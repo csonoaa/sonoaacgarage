@@ -46,7 +46,12 @@ const carFormSchema = z.object({
   exteriorColor: z.string().min(1, "Please select a color"),
   vin: z.string().optional().refine(val => !val || validateVIN(val), {
     message: "Please enter a valid 17-character VIN"
-  })
+  }),
+  exteriorCondition: z.string().min(1, "Please select exterior condition"),
+  interiorCondition: z.string().min(1, "Please select interior condition"),
+  modifications: z.string().optional(),
+  serviceHistory: z.string().min(1, "Please select service history"),
+  accidentHistory: z.string().min(1, "Please select accident history")
 });
 
 const conditionFormSchema = z.object({
@@ -96,7 +101,12 @@ export function CarValuationForm() {
       transmission: "",
       drivetrain: "",
       exteriorColor: "",
-      vin: ""
+      vin: "",
+      exteriorCondition: "",
+      interiorCondition: "",
+      modifications: "",
+      serviceHistory: "",
+      accidentHistory: ""
     }
   });
 
@@ -356,6 +366,7 @@ export function CarValuationForm() {
                                 handleModelChange(value);
                               }}
                               defaultValue={field.value}
+                              disabled={availableModels.length === 0}
                             >
                               <FormControl>
                                 <SelectTrigger className="w-[180px]">
@@ -571,6 +582,119 @@ export function CarValuationForm() {
                       )}
                     />
                   </div>
+
+                  {/* Additional Vehicle Details */}
+                  <FormField
+                    control={carForm.control}
+                    name="exteriorCondition"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Exterior Condition</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Condition" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="excellent">Excellent - No visible wear</SelectItem>
+                            <SelectItem value="good">Good - Minor wear</SelectItem>
+                            <SelectItem value="fair">Fair - Some scratches/dents</SelectItem>
+                            <SelectItem value="poor">Poor - Significant damage</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={carForm.control}
+                    name="interiorCondition"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Interior Condition</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select Condition" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="excellent">Excellent - Like new</SelectItem>
+                            <SelectItem value="good">Good - Minor wear</SelectItem>
+                            <SelectItem value="fair">Fair - Some stains/wear</SelectItem>
+                            <SelectItem value="poor">Poor - Significant wear/damage</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={carForm.control}
+                    name="modifications"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Modifications</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="List any modifications (tint, aftermarket parts, etc.)"
+                            className="h-24"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={carForm.control}
+                    name="serviceHistory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Service History</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select History" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="complete">Complete Service Records</SelectItem>
+                            <SelectItem value="partial">Partial Service Records</SelectItem>
+                            <SelectItem value="none">No Service Records</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={carForm.control}
+                    name="accidentHistory"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Accident History</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select History" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">No Accidents</SelectItem>
+                            <SelectItem value="minor">Minor Accidents</SelectItem>
+                            <SelectItem value="major">Major Accidents</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   <div className="mt-8 flex justify-end">
                     <Button type="submit" className="bg-primary hover:bg-primary/90">
