@@ -149,37 +149,73 @@ export function CarValuationForm() {
 
   // Handle contact form submission
   const onContactFormSubmit = async (data: z.infer<typeof contactFormSchema>) => {
-    if (!carData || !conditionData) return;
+    if (!carData || !conditionData) {
+      console.error("Missing car data or condition data");
+      toast({
+        title: "Error",
+        description: "Please complete all form steps before submitting.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       setIsSubmitting(true);
+      console.log("Submitting form data:", { carData, conditionData, contactData: data });
 
-      // Combine all form data
+      // Combine all form data in the format expected by the server
       const fullFormData = {
-        ...carData,
-        ...conditionData,
-        ...data
+        // Car details
+        make: carData.make,
+        model: carData.model,
+        year: carData.year,
+        trim: carData.trim,
+        bodyType: carData.bodyType,
+        mileage: carData.mileage,
+        transmission: carData.transmission,
+        drivetrain: carData.drivetrain,
+        exteriorColor: carData.exteriorColor,
+        vin: carData.vin,
+        
+        // Condition
+        drivable: conditionData.drivable,
+        condition: conditionData.condition,
+        additionalInfo: conditionData.additionalInfo,
+        
+        // Contact info
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        zipCode: data.zipCode,
+        termsAgreed: data.termsAgreed
       };
+
+      console.log("Full form data:", fullFormData);
 
       // Submit to API
       const response = await apiRequest("POST", "/api/car/valuation", fullFormData);
+      console.log("API response status:", response.status);
       
       if (!response.ok) {
-        throw new Error('Failed to get offer');
+        const errorText = await response.text();
+        console.error("API error response:", errorText);
+        throw new Error(`Failed to get offer: ${errorText}`);
       }
 
       const offerData = await response.json();
+      console.log("Offer data received:", offerData);
       
       setContactData(data);
       setShowOfferResult(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
-        description: "There was a problem getting your offer. Please try again.",
+        description: error instanceof Error ? error.message : "There was a problem getting your offer. Please try again.",
         variant: "destructive"
       });
-      console.error("Form submission error:", error);
     } finally {
       setIsSubmitting(false);
     }

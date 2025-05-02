@@ -135,11 +135,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Car valuation endpoint
   app.post("/api/car/valuation", async (req: Request, res: Response) => {
     try {
+      console.log("Received valuation request:", req.body);
+      
       // Validate request data
       const validatedData = carValuationRequestSchema.parse(req.body);
+      console.log("Validated data:", validatedData);
       
       // Calculate car value
       const offerAmount = calculateCarValue(validatedData);
+      console.log("Calculated offer amount:", offerAmount);
       
       // Create valuation in storage
       const valuationData = insertCarValuationSchema.parse({
@@ -163,7 +167,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         zipCode: validatedData.zipCode
       });
       
+      console.log("Creating valuation with data:", valuationData);
       const valuation = await storage.createValuation(valuationData, offerAmount);
+      console.log("Created valuation:", valuation);
       
       // Return the offer
       return res.status(201).json({
@@ -175,6 +181,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
     } catch (error) {
+      console.error("Error processing valuation request:", error);
+      
       if (error instanceof ZodError) {
         const validationError = fromZodError(error);
         return res.status(400).json({
@@ -184,7 +192,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.error("Error creating valuation:", error);
       return res.status(500).json({
         success: false,
         message: "Server error while processing car valuation"

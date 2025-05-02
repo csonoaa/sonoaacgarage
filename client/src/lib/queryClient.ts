@@ -15,15 +15,37 @@ export async function apiRequest(
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
   const fullUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
   
-  const res = await fetch(fullUrl, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+  console.log(`Making API request to: ${fullUrl}`);
+  console.log('Request data:', data);
 
-  await throwIfResNotOk(res);
-  return res;
+  try {
+    const res = await fetch(fullUrl, {
+      method,
+      headers: data ? { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      } : {},
+      body: data ? JSON.stringify(data) : undefined,
+      credentials: "include",
+    });
+
+    console.log('Response status:', res.status);
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('API error response:', {
+        status: res.status,
+        statusText: res.statusText,
+        error: errorText
+      });
+      throw new Error(`API request failed: ${res.status} ${res.statusText} - ${errorText}`);
+    }
+
+    return res;
+  } catch (error) {
+    console.error('API request error:', error);
+    throw error;
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
