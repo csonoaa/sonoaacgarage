@@ -1,9 +1,11 @@
 {
-  "name": "car-market-valuator",
+  "name": "sonoaac-garage",
   "version": "1.0.0",
+  "description": "Car valuation and sales website",
   "private": true,
-  "type": "module",
   "scripts": {
-    "build": "echo 'No build needed - static HTML'"
-  }
+    "test": "echo \"No tests specified\""
+  },
+  "author": "SonoaaC",
+  "license": "MIT"
 }

@@ -1,144 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Car Market Valuator</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1 { color: #2563eb; }
-    .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-    button { 
-      background: #2563eb; 
-      color: white; 
-      border: none; 
-      padding: 10px 15px; 
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 20px;
-      padding: 15px;
-      background: #f0f9ff;
-      border: 1px solid #bae6fd;
-      border-radius: 4px;
-      display: none;
-    }
-    .result-value { font-size: 24px; font-weight: bold; color: #0284c7; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonoaaC Garage - Car Value Estimator</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <h1>Car Market Valuator</h1>
-  <p>Get an instant offer for your vehicle</p>
-  
-  <form id="carForm">
-    <div class="form-group">
-      <label for="make">Make</label>
-      <input type="text" id="make" required>
-    </div>
-    
-    <div class="form-group">
-      <label for="model">Model</label>
-      <input type="text" id="model" required>
-    </div>
-    
-    <div class="form-group">
-      <label for="year">Year</label>
-      <input type="number" id="year" required min="1980" max="2024">
-    </div>
-    
-    <div class="form-group">
-      <label for="mileage">Mileage</label>
-      <input type="number" id="mileage" required>
-    </div>
-    
-    <div class="form-group">
-      <label for="condition">Condition</label>
-      <select id="condition" required>
-        <option value="">Select condition</option>
-        <option value="excellent">Excellent</option>
-        <option value="good">Good</option>
-        <option value="fair">Fair</option>
-        <option value="poor">Poor</option>
-      </select>
-    </div>
-    
-    <button type="submit">Get Instant Offer</button>
-  </form>
-  
-  <div id="result">
-    <h2>Your Offer</h2>
-    <p>Based on the information provided, we can offer:</p>
-    <div class="result-value" id="offerAmount">$0</div>
-    <p>This offer is valid for 7 days.</p>
-  </div>
-  
-  <script>
-    document.getElementById('carForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const make = document.getElementById('make').value;
-      const model = document.getElementById('model').value;
-      const year = parseInt(document.getElementById('year').value);
-      const mileage = parseInt(document.getElementById('mileage').value);
-      const condition = document.getElementById('condition').value;
-      
-      const offerAmount = calculateCarValue(make, model, year, mileage, condition);
-      
-      document.getElementById('offerAmount').textContent = '$' + offerAmount.toLocaleString();
-      document.getElementById('result').style.display = 'block';
-    });
-    
-    function calculateCarValue(make, model, year, mileage, condition) {
-      // Base values for popular models (in USD)
-      const baseValues = {
-        "camry": 18000,
-        "corolla": 15000,
-        "rav4": 20000,
-        "accord": 17500,
-        "civic": 14500,
-        "default": 12000
-      };
-      
-      // Get base value for the model or use default
-      const modelLower = model.toLowerCase();
-      let baseValue = baseValues[modelLower] || baseValues.default;
-      
-      // Year multipliers
-      let yearMultiplier = 0.2;
-      if (year >= 2020) yearMultiplier = 1.2;
-      else if (year >= 2015) yearMultiplier = 0.8;
-      else if (year >= 2010) yearMultiplier = 0.5;
-      
-      // Mileage multipliers
-      let mileageMultiplier = 0.25;
-      if (mileage <= 30000) mileageMultiplier = 1.1;
-      else if (mileage <= 60000) mileageMultiplier = 1.0;
-      else if (mileage <= 100000) mileageMultiplier = 0.8;
-      else if (mileage <= 150000) mileageMultiplier = 0.6;
-      
-      // Condition multipliers
-      let conditionMultiplier = 1.0;
-      switch (condition) {
-        case "excellent": conditionMultiplier = 1.1; break;
-        case "good": conditionMultiplier = 1.0; break;
-        case "fair": conditionMultiplier = 0.8; break;
-        case "poor": conditionMultiplier = 0.6; break;
-      }
-      
-      // Calculate offer
-      let amount = baseValue * yearMultiplier * mileageMultiplier * conditionMultiplier;
-      
-      // Round to nearest hundred
-      return Math.round(amount / 100) * 100;
-    }
-  </script>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>SonoaaC Garage</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active">Car Valuation</a></li>
+                    <li><a href="#">Our Services</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2>Get Your Car's Value in Seconds</h2>
+                    <p>Find out exactly how much your car is worth with our instant valuation tool.</p>
+                </div>
+                <div class="car-image">
+                    <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1000" alt="Luxury car">
+                </div>
+            </div>
+        </section>
+
+        <section class="valuation-form">
+            <div class="container">
+                <div class="form-container">
+                    <h3>Car Valuation Tool</h3>
+                    <form id="car-form">
+                        <div class="form-group">
+                            <label for="car-make">Car Make</label>
+                            <select id="car-make" required>
+                                <option value="">Select Make</option>
+                                <option value="toyota">Toyota</option>
+                                <option value="honda">Honda</option>
+                                <option value="ford">Ford</option>
+                                <option value="bmw">BMW</option>
+                                <option value="mercedes">Mercedes</option>
+                                <option value="audi">Audi</option>
+                                <option value="chevrolet">Chevrolet</option>
+                                <option value="nissan">Nissan</option>
+                                <option value="hyundai">Hyundai</option>
+                                <option value="kia">Kia</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="car-model">Car Model</label>
+                            <input type="text" id="car-model" placeholder="e.g. Camry, Civic" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="car-year">Year</label>
+                                <input type="number" id="car-year" min="1990" max="2024" placeholder="2020" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-mileage">Mileage</label>
+                                <input type="number" id="car-mileage" min="0" placeholder="25000" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="car-condition">Condition</label>
+                            <select id="car-condition" required>
+                                <option value="">Select Condition</option>
+                                <option value="excellent">Excellent - Like New</option>
+                                <option value="good">Good - Minor Wear</option>
+                                <option value="fair">Fair - Some Problems</option>
+                                <option value="poor">Poor - Needs Work</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="car-color">Color</label>
+                                <input type="text" id="car-color" placeholder="e.g. Black, Silver">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="car-body">Body Type</label>
+                                <select id="car-body">
+                                    <option value="">Select Type</option>
+                                    <option value="sedan">Sedan</option>
+                                    <option value="suv">SUV</option>
+                                    <option value="truck">Truck</option>
+                                    <option value="coupe">Coupe</option>
+                                    <option value="hatchback">Hatchback</option>
+                                    <option value="convertible">Convertible</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" placeholder="Full Name" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" placeholder="your@email.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Phone Number</label>
+                                <input type="tel" id="phone" placeholder="(123) 456-7890" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Get My Car Valuation</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <div id="offer-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h3>Your Car Valuation</h3>
+                <div class="car-details">
+                    <p><strong>Make:</strong> <span id="result-make"></span></p>
+                    <p><strong>Model:</strong> <span id="result-model"></span></p>
+                    <p><strong>Year:</strong> <span id="result-year"></span></p>
+                    <p><strong>Mileage:</strong> <span id="result-mileage"></span></p>
+                    <p><strong>Condition:</strong> <span id="result-condition"></span></p>
+                </div>
+                <div class="offer-amount">
+                    <h4>Our Offer:</h4>
+                    <div class="amount" id="result-amount">$0</div>
+                    <p class="valid">This offer is valid for the next 7 days</p>
+                </div>
+                <div class="action-buttons">
+                    <a href="https://sonoaacgarage.com/accept-offer" class="btn-primary">Accept Offer</a>
+                    <a href="https://sonoaacgarage.com/contact" class="btn-secondary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>SonoaaC Garage</h2>
+                    <p>The best place to sell your car</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Car Valuation</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><strong>Address:</strong> 123 Auto Lane, Car City, CC 12345</p>
+                    <p><strong>Phone:</strong> (555) 123-4567</p>
+                    <p><strong>Email:</strong> info@sonoaacgarage.com</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 SonoaaC Garage. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
 </body>
 </html> 
