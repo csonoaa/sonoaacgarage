@@ -3,86 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonoAAC Garage - Car Valuator</title>
+    <title>SonoAAC Garage - Car Valuation</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <header>
-        <h1>SonoAAC Garage</h1>
         <nav>
-            <a href="index.html" class="active">Valuator</a>
-            <a href="sell.html">Sell My Car</a>
-            <a href="offers.html">Price Rules</a>
-            <a href="about.html">About</a>
+            <ul>
+                <li><a href="index.html" class="active">Valuator</a></li>
+                <li><a href="sell.html">Sell My Car</a></li>
+                <li><a href="offers.html">Price Rules</a></li>
+                <li><a href="about.html">About Us</a></li>
+            </ul>
         </nav>
     </header>
 
     <main>
-        <h2>Get Your Car Offer</h2>
+        <h1>Get Your Instant Offer</h1>
         <form id="carForm">
             <div class="form-group">
-                <label for="make">Make</label>
+                <label for="make">Make *</label>
                 <select id="make" name="make" required>
                     <option value="">Select Make</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="model">Model</label>
-                <select id="model" name="model" disabled required>
+                <label for="model">Model *</label>
+                <select id="model" name="model" required disabled>
                     <option value="">Select Model</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="year">Year</label>
-                <input type="number" id="year" name="year" min="1990" max="2025" required>
+                <label for="year">Year *</label>
+                <select id="year" name="year" required>
+                    <option value="">Select Year</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="mileage">Mileage</label>
-                <input type="number" id="mileage" name="mileage" min="0" required>
+                <label for="color">Color *</label>
+                <select id="color" name="color" required>
+                    <option value="">Select Color</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label for="condition">Condition</label>
+                <label for="condition">Condition *</label>
                 <select id="condition" name="condition" required>
                     <option value="">Select Condition</option>
-                    <option value="Great">Great</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
-                    <option value="Bad">Bad</option>
-                    <option value="Non-Drivable">Non-Drivable</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="converter">Catalytic Converter Present</label>
-                <select id="converter" name="converter" required>
-                    <option value="">Select Status</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
+                <label for="mileage">Mileage *</label>
+                <input type="number" id="mileage" name="mileage" required min="0" placeholder="Enter mileage">
             </div>
 
             <div class="form-group">
-                <label for="drivable">Drivable</label>
-                <select id="drivable" name="drivable" required>
-                    <option value="">Select Status</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="state">State</label>
+                <label for="state">State *</label>
                 <select id="state" name="state" required>
                     <option value="">Select State</option>
                 </select>
             </div>
 
+            <div class="form-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="catalyticConverter" name="catalyticConverter">
+                    Catalytic Converter Present
+                </label>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="drivable" name="drivable" checked>
+                    Vehicle is Drivable
+                </label>
+            </div>
+
             <div class="form-group">
-                <label for="photos">Upload Photos (Required)</label>
+                <label for="photos">Photos *</label>
                 <input type="file" id="photos" name="photos" accept="image/*" multiple required>
                 <div id="photoPreview" class="photo-preview-container"></div>
             </div>
@@ -90,9 +91,13 @@
             <button type="submit">Get Offer</button>
         </form>
 
-        <div id="offerResult"></div>
+        <div id="result" class="result-container"></div>
     </main>
 
-    <script type="module" src="js/valuator.js"></script>
+    <footer>
+        <p>&copy; 2024 SonoAAC Garage. All rights reserved.</p>
+    </footer>
+
+    <script type="module" src="ts/valuator.js"></script>
 </body>
 </html> 

@@ -1,10 +1,16 @@
-import { Condition, State, CarInfo, FormValidation } from './types.js';
-import { carData, carPrices } from './data.js';
+import { Condition, State, CarInfo, FormValidation, Color } from './types.js';
+import { carData, carPrices, colors } from './data.js';
 
 // DOM Elements
 const makeSelect = document.getElementById('make') as HTMLSelectElement;
 const modelSelect = document.getElementById('model') as HTMLSelectElement;
 const stateSelect = document.getElementById('state') as HTMLSelectElement;
+const colorSelect = document.getElementById('color') as HTMLSelectElement;
+const yearSelect = document.getElementById('year') as HTMLSelectElement;
+const conditionSelect = document.getElementById('condition') as HTMLSelectElement;
+const mileageInput = document.getElementById('mileage') as HTMLInputElement;
+const catalyticConverterCheckbox = document.getElementById('catalyticConverter') as HTMLInputElement;
+const drivableCheckbox = document.getElementById('drivable') as HTMLInputElement;
 const photoInput = document.getElementById('photos') as HTMLInputElement;
 const photoPreview = document.getElementById('photoPreview') as HTMLDivElement;
 const form = document.getElementById('carForm') as HTMLFormElement;
@@ -27,22 +33,31 @@ function initializeDropdowns(): void {
         option.textContent = name;
         stateSelect.appendChild(option);
     });
-}
 
-// Update Model dropdown based on selected Make
-function updateModelDropdown(make: string): void {
-    modelSelect.innerHTML = '<option value="">Select Model</option>';
-    if (make && carData[make]) {
-        carData[make].forEach(model => {
-            const option = document.createElement('option');
-            option.value = model;
-            option.textContent = model;
-            modelSelect.appendChild(option);
-        });
-        modelSelect.disabled = false;
-    } else {
-        modelSelect.disabled = true;
+    // Populate Color dropdown
+    colors.forEach(color => {
+        const option = document.createElement('option');
+        option.value = color;
+        option.textContent = color;
+        colorSelect.appendChild(option);
+    });
+
+    // Populate Year dropdown (2000 to current year)
+    const currentYear = new Date().getFullYear();
+    for (let year = 2000; year <= currentYear; year++) {
+        const option = document.createElement('option');
+        option.value = year.toString();
+        option.textContent = year.toString();
+        yearSelect.appendChild(option);
     }
+
+    // Populate Condition dropdown
+    Object.values(Condition).forEach(condition => {
+        const option = document.createElement('option');
+        option.value = condition;
+        option.textContent = condition;
+        conditionSelect.appendChild(option);
+    });
 }
 
 // Handle photo upload preview
@@ -106,96 +121,111 @@ function validateForm(form: HTMLFormElement): FormValidation {
 function calculateOffer(car: CarInfo): number {
     // Get base price from pricing table
     const basePrice = carPrices[car.make][car.model];
-    let offer = basePrice;
+    let offer = basePrice * 0.63; // Apply 37% cut
 
-    // Year depreciation (2% per year)
-    const currentYear = new Date().getFullYear();
-    const yearsOld = currentYear - car.year;
-    offer *= Math.pow(0.98, yearsOld);
-
-    // Condition adjustments
+    // Apply condition penalties
     switch (car.condition) {
-        case Condition.Good:
-            offer *= 0.95;
-            break;
         case Condition.Fair:
-            offer *= 0.85;
+            offer -= 300;
             break;
         case Condition.Bad:
-            offer *= 0.70;
+            offer -= 500;
             break;
         case Condition.NonDrivable:
-            offer *= 0.50;
+            // No immediate penalty, handled by cap rule
             break;
+        // Great & Good have no penalty
     }
 
-    // Mileage adjustments
-    if (car.mileage > 200000) {
-        offer *= 0.70;
-    } else if (car.mileage > 150000) {
-        offer *= 0.80;
-    } else if (car.mileage > 100000) {
-        offer *= 0.90;
-    } else if (car.mileage > 50000) {
-        offer *= 0.95;
-    }
-
-    // Additional factors
+    // Catalytic converter penalty
     if (!car.catalyticConverterPresent) {
-        offer -= 1000;
+        offer -= 300;
     }
 
-    if (!car.isDrivable) {
-        offer *= 0.80;
+    // Mileage rule
+    if (car.mileage >= 150000) {
+        offer -= 600;
+    } else if (car.mileage >= 120000) {
+        offer -= 300;
     }
 
-    // State-specific adjustments
-    const highValueStates = [State.CA, State.NY, State.TX, State.FL];
-    if (highValueStates.includes(car.state)) {
-        offer *= 1.05; // 5% premium for high-value states
+    // Non-drivable cap rule
+    if (car.condition === Condition.NonDrivable || !car.isDrivable) {
+        offer = Math.min(offer, 900);
     }
 
-    return Math.max(0, Math.round(offer));
+    // Never return less than $0
+    return Math.max(offer, 0);
 }
 
 // Display offer result
 function displayResult(car: CarInfo, offer: number): void {
     const deductions = [];
     
-    if (car.condition !== Condition.Great) {
-        deductions.push(`Condition (${car.condition})`);
+    // Base price and 37% cut
+    const basePrice = carPrices[car.make][car.model];
+    deductions.push(`Base Price: $${basePrice.toLocaleString()}`);
+    deductions.push(`37% Cut: -$${(basePrice * 0.37).toLocaleString()}`);
+    
+    // Condition deduction
+    switch (car.condition) {
+        case Condition.Fair:
+            deductions.push('Condition (Fair): -$300');
+            break;
+        case Condition.Bad:
+            deductions.push('Condition (Bad): -$500');
+            break;
+        case Condition.NonDrivable:
+            deductions.push('Condition (Non-Drivable): Cap Applied');
+            break;
     }
     
-    if (car.mileage > 50000) {
-        deductions.push(`Mileage (${car.mileage.toLocaleString()} miles)`);
-    }
-    
+    // Catalytic converter deduction
     if (!car.catalyticConverterPresent) {
-        deductions.push('Missing Catalytic Converter');
+        deductions.push('Missing Catalytic Converter: -$300');
     }
     
-    if (!car.isDrivable) {
-        deductions.push('Non-Drivable');
+    // Mileage deduction
+    if (car.mileage >= 150000) {
+        deductions.push('Mileage (150,000+): -$600');
+    } else if (car.mileage >= 120000) {
+        deductions.push('Mileage (120,000+): -$300');
     }
-
-    resultElement.innerHTML = `
+    
+    // Non-drivable cap
+    if (car.condition === Condition.NonDrivable || !car.isDrivable) {
+        deductions.push('Non-Drivable Cap: $900 Maximum');
+    }
+    
+    // Create result HTML
+    let resultHTML = `
         <div class="result-card">
             <h3>Your Offer: $${offer.toLocaleString()}</h3>
-            <p>For your ${car.year} ${car.make} ${car.model} in ${car.condition} condition.</p>
-            ${deductions.length > 0 ? `
-                <p>Deductions Applied:</p>
+            <div class="car-details">
+                <p><strong>${car.year} ${car.make} ${car.model}</strong></p>
+                <p>Color: ${car.color}</p>
+                <p>Mileage: ${car.mileage.toLocaleString()} miles</p>
+                <p>Condition: ${car.condition}</p>
+                <p>Location: ${car.state}</p>
+            </div>
+            <div class="deductions">
+                <h4>Price Breakdown:</h4>
                 <ul>
-                    ${deductions.map(deduction => `<li>${deduction}</li>`).join('')}
+                    ${deductions.map(d => `<li>${d}</li>`).join('')}
                 </ul>
-            ` : ''}
-            <p>This offer is valid for 7 days.</p>
+            </div>
             <div class="photo-preview-container">
-                ${Array.from(photoInput.files || []).map(file => `
-                    <img src="${URL.createObjectURL(file)}" class="photo-preview" alt="Car photo">
-                `).join('')}
+                <h4>Uploaded Photos:</h4>
+                <div class="photo-grid">
+                    ${Array.from(car.photos || []).map(photo => `
+                        <img src="${URL.createObjectURL(photo)}" alt="Car photo" class="photo-preview">
+                    `).join('')}
+                </div>
             </div>
         </div>
     `;
+    
+    resultElement.innerHTML = resultHTML;
 }
 
 // Event Listeners
@@ -203,7 +233,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeDropdowns();
 
     makeSelect.addEventListener('change', () => {
-        updateModelDropdown(makeSelect.value);
+        const selectedMake = makeSelect.value;
+        modelSelect.innerHTML = '<option value="">Select Model</option>';
+        modelSelect.disabled = !selectedMake;
+
+        if (selectedMake) {
+            carData[selectedMake].forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
     });
 
     photoInput.addEventListener('change', handlePhotoUpload);
@@ -226,6 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             catalyticConverterPresent: (form.converter as any).value === 'yes',
             isDrivable: (form.drivable as any).value === 'yes',
             state: (form.state as any).value as State,
+            color: (form.color as any).value as Color,
             photos: photoInput.files ? Array.from(photoInput.files) : undefined
         };
 

@@ -59,12 +59,28 @@ export enum State {
     WY = "Wyoming"
 }
 
+export enum Color {
+    White = "White",
+    Black = "Black",
+    Silver = "Silver",
+    Gray = "Gray",
+    Red = "Red",
+    Blue = "Blue",
+    Green = "Green",
+    Brown = "Brown",
+    Beige = "Beige",
+    Gold = "Gold",
+    Orange = "Orange",
+    Yellow = "Yellow"
+}
+
 export interface CarInfo {
     make: string;
     model: string;
     year: number;
     mileage: number;
     condition: Condition;
+    color: Color;
     catalyticConverterPresent: boolean;
     isDrivable: boolean;
     state: State;
