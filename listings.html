@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonoAAC Garage - Car Listings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">SonoAAC Garage</div>
+        <div class="nav-links">
+            <a href="sonoaacgarage.html">Home</a>
+            <a href="valuator.html">Valuate Your Car</a>
+            <a href="listings.html" class="active">Listings</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <main class="listings">
+        <h1>Available Cars</h1>
+        
+        <div class="filters">
+            <select id="filterMake">
+                <option value="">All Makes</option>
+                <!-- Makes will be populated by JavaScript -->
+            </select>
+            
+            <select id="filterBodyType">
+                <option value="">All Body Types</option>
+                <option value="sedan">Sedan</option>
+                <option value="suv">SUV</option>
+                <option value="truck">Truck</option>
+                <option value="coupe">Coupe</option>
+                <option value="convertible">Convertible</option>
+                <option value="hatchback">Hatchback</option>
+                <option value="van">Van</option>
+                <option value="wagon">Wagon</option>
+                <option value="other">Other</option>
+            </select>
+            
+            <select id="filterState">
+                <option value="">All States</option>
+                <!-- States will be populated by JavaScript -->
+            </select>
+        </div>
+
+        <div id="carListings" class="car-listings">
+            <!-- Car listings will be populated by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 SonoAAC Garage. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 

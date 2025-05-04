@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonoAAC Garage - Car Valuation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">SonoAAC Garage</div>
+        <div class="nav-links">
+            <a href="sonoaacgarage.html">Home</a>
+            <a href="valuator.html" class="active">Valuate Your Car</a>
+            <a href="listings.html">Listings</a>
+            <a href="contact.html">Contact</a>
+        </div>
+    </nav>
+
+    <main class="valuation-form">
+        <h1>Car Valuation</h1>
+        <p>Fill in your car's details to get an instant valuation</p>
+        
+        <form id="carValuationForm">
+            <div class="form-group">
+                <label for="make">Make</label>
+                <select id="make" name="make" required>
+                    <option value="">Select Make</option>
+                    <option value="toyota">Toyota</option>
+                    <option value="honda">Honda</option>
+                    <option value="ford">Ford</option>
+                    <option value="bmw">BMW</option>
+                    <option value="audi">Audi</option>
+                    <option value="nissan">Nissan</option>
+                    <option value="hyundai">Hyundai</option>
+                    <option value="kia">Kia</option>
+                    <option value="mercedes">Mercedes</option>
+                    <option value="chevrolet">Chevrolet</option>
+                    <option value="tesla">Tesla</option>
+                    <option value="volkswagen">Volkswagen</option>
+                    <option value="jeep">Jeep</option>
+                    <option value="subaru">Subaru</option>
+                    <option value="lexus">Lexus</option>
+                    <option value="dodge">Dodge</option>
+                    <option value="gmc">GMC</option>
+                    <option value="mazda">Mazda</option>
+                    <option value="volvo">Volvo</option>
+                    <option value="landrover">Land Rover</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="model">Model</label>
+                <input type="text" id="model" name="model" required>
+            </div>
+
+            <div class="form-group">
+                <label for="year">Year</label>
+                <select id="year" name="year" required>
+                    <option value="">Select Year</option>
+                    <!-- Years will be populated by JavaScript -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color</label>
+                <select id="color" name="color" required>
+                    <option value="">Select Color</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="silver">Silver</option>
+                    <option value="gray">Gray</option>
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Yellow</option>
+                    <option value="brown">Brown</option>
+                    <option value="gold">Gold</option>
+                    <option value="orange">Orange</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="transmission">Transmission</label>
+                <select id="transmission" name="transmission" required>
+                    <option value="">Select Transmission</option>
+                    <option value="automatic">Automatic</option>
+                    <option value="manual">Manual</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="catalyticConverter">Catalytic Converter</label>
+                <select id="catalyticConverter" name="catalyticConverter" required>
+                    <option value="">Select Status</option>
+                    <option value="present">Present</option>
+                    <option value="missing">Missing</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="bodyType">Body Type</label>
+                <select id="bodyType" name="bodyType" required>
+                    <option value="">Select Body Type</option>
+                    <option value="sedan">Sedan</option>
+                    <option value="suv">SUV</option>
+                    <option value="truck">Truck</option>
+                    <option value="coupe">Coupe</option>
+                    <option value="convertible">Convertible</option>
+                    <option value="hatchback">Hatchback</option>
+                    <option value="van">Van</option>
+                    <option value="wagon">Wagon</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="condition">Condition</label>
+                <select id="condition" name="condition" required>
+                    <option value="">Select Condition</option>
+                    <option value="great">Great</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                    <option value="bad">Bad</option>
+                    <option value="nondrivable">Non-Drivable</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="mileage">Mileage</label>
+                <input type="number" id="mileage" name="mileage" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State</label>
+                <select id="state" name="state" required>
+                    <option value="">Select State</option>
+                    <!-- US States will be populated by JavaScript -->
+                </select>
+            </div>
+
+            <button type="submit" class="submit-button">Get My Offer</button>
+        </form>
+
+        <div id="valuationResult" class="valuation-result hidden">
+            <h2>Your Car's Value</h2>
+            <p class="estimated-value">Estimated Value: <span id="estimatedValue">$0</span></p>
+            <p class="platform-fee">Platform Fee (30%): <span id="platformFee">$0</span></p>
+            <p class="final-offer">Final Offer: <span id="finalOffer">$0</span></p>
+            <button id="listForSale" class="list-button">List for Sale</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 SonoAAC Garage. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html> 
