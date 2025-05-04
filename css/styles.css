@@ -1,12 +1,12 @@
 :root {
     --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --accent-color: #e74c3c;
+    --secondary-color: #e74c3c;
+    --accent-color: #3498db;
     --background-color: #f5f6fa;
     --text-color: #2c3e50;
     --border-color: #dcdde1;
     --success-color: #27ae60;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
 }
 
@@ -23,83 +23,122 @@ body {
     background-color: var(--background-color);
 }
 
-header {
+.main-header {
     background-color: var(--primary-color);
-    padding: 1rem;
+    padding: 1rem 2rem;
     box-shadow: var(--shadow);
 }
 
-nav ul {
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.nav-links {
+    display: flex;
     list-style: none;
     gap: 2rem;
 }
 
-nav a {
+.nav-links a {
     color: white;
     text-decoration: none;
+    font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: var(--transition);
 }
 
-nav a:hover {
+.nav-links a:hover, .nav-links a.active {
     background-color: var(--secondary-color);
 }
 
-nav a.active {
-    background-color: var(--secondary-color);
-}
-
-main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-h1 {
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 2.5rem;
+    color: white;
 }
 
-form {
-    background-color: white;
+.hero-content {
+    max-width: 800px;
+    padding: 2rem;
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.valuation-form {
+    max-width: 1200px;
+    margin: -50px auto 2rem;
+    padding: 0 2rem;
+}
+
+.form-container {
+    background: white;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: var(--shadow);
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.form-container h3 {
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 1.8rem;
 }
 
-label {
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--primary-color);
+    font-weight: 500;
 }
 
-input[type="text"],
-input[type="number"],
-input[type="file"],
-select {
+.form-group input,
+.form-group select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.8rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1rem;
     transition: var(--transition);
 }
 
-input[type="text"]:focus,
-input[type="number"]:focus,
-select:focus {
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
-    border-color: var(--secondary-color);
+    border-color: var(--accent-color);
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
@@ -109,79 +148,76 @@ select:focus {
     gap: 0.5rem;
 }
 
-.checkbox-group label {
-    margin-bottom: 0;
-    font-weight: normal;
-}
-
-input[type="checkbox"] {
+.checkbox-group input[type="checkbox"] {
     width: auto;
     margin-right: 0.5rem;
 }
 
-button {
-    background-color: var(--secondary-color);
-    color: white;
-    padding: 1rem 2rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    transition: var(--transition);
+.full-width {
+    grid-column: 1 / -1;
 }
 
-button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-}
-
-.photo-preview-container {
-    margin-top: 1rem;
-}
-
-.photo-grid {
+.photo-preview {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
 }
 
-.photo-preview {
+.photo-preview img {
     width: 100%;
     height: 150px;
     object-fit: cover;
     border-radius: 4px;
     box-shadow: var(--shadow);
+}
+
+.submit-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 2rem auto 0;
+    padding: 1rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
     transition: var(--transition);
 }
 
-.photo-preview:hover {
-    transform: scale(1.05);
+.submit-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
 }
 
-.result-container {
-    margin-top: 2rem;
+.result-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
 }
 
 .result-card {
-    background-color: white;
+    background: white;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: var(--shadow);
 }
 
 .result-card h3 {
-    color: var(--secondary-color);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
 }
 
 .car-details {
+    background-color: var(--background-color);
+    padding: 1.5rem;
+    border-radius: 4px;
     margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .car-details p {
@@ -198,39 +234,45 @@ button:hover {
 }
 
 .deductions ul {
-    list-style-position: inside;
-    margin-left: 1rem;
+    list-style: none;
 }
 
 .deductions li {
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 footer {
-    text-align: center;
-    padding: 1rem;
     background-color: var(--primary-color);
     color: white;
-    margin-top: 2rem;
+    padding: 2rem;
+    margin-top: 3rem;
 }
 
-@media (max-width: 600px) {
-    nav ul {
-        flex-direction: column;
-        align-items: center;
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .hero {
+        height: 300px;
+    }
+
+    .hero-content h2 {
+        font-size: 2rem;
+    }
+
+    .nav-links {
         gap: 1rem;
     }
 
-    main {
-        margin: 1rem;
+    .form-grid {
+        grid-template-columns: 1fr;
     }
 
-    form {
-        padding: 1rem;
-    }
-
-    .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    .valuation-form {
+        margin-top: 0;
     }
 } 

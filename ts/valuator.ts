@@ -22,7 +22,7 @@ class CarValuator {
     }
 
     private initializeElements(): FormElements {
-        return {
+        const elements = {
             make: document.getElementById('make') as HTMLSelectElement,
             model: document.getElementById('model') as HTMLSelectElement,
             year: document.getElementById('year') as HTMLSelectElement,
@@ -37,6 +37,15 @@ class CarValuator {
             result: document.getElementById('result') as HTMLDivElement,
             form: document.getElementById('carForm') as HTMLFormElement
         };
+
+        // Verify all elements exist
+        Object.entries(elements).forEach(([key, element]) => {
+            if (!element) {
+                throw new Error(`Element with id '${key}' not found`);
+            }
+        });
+
+        return elements;
     }
 
     private initializeDropdowns(): void {
@@ -48,7 +57,9 @@ class CarValuator {
     }
 
     private populateMakeDropdown(): void {
-        Object.keys(carData).forEach(make => {
+        const makes = Object.keys(carData);
+        this.elements.make.innerHTML = '<option value="">Select Make</option>';
+        makes.forEach(make => {
             const option = document.createElement('option');
             option.value = make;
             option.textContent = make;
@@ -58,6 +69,7 @@ class CarValuator {
 
     private populateYearDropdown(): void {
         const currentYear = new Date().getFullYear();
+        this.elements.year.innerHTML = '<option value="">Select Year</option>';
         for (let year = 2000; year <= currentYear; year++) {
             const option = document.createElement('option');
             option.value = year.toString();
@@ -67,6 +79,7 @@ class CarValuator {
     }
 
     private populateConditionDropdown(): void {
+        this.elements.condition.innerHTML = '<option value="">Select Condition</option>';
         Object.values(Condition).forEach(condition => {
             const option = document.createElement('option');
             option.value = condition;
@@ -76,6 +89,7 @@ class CarValuator {
     }
 
     private populateStateDropdown(): void {
+        this.elements.state.innerHTML = '<option value="">Select State</option>';
         Object.values(State).forEach(state => {
             const option = document.createElement('option');
             option.value = state;
@@ -85,6 +99,7 @@ class CarValuator {
     }
 
     private populateColorDropdown(): void {
+        this.elements.color.innerHTML = '<option value="">Select Color</option>';
         colors.forEach(color => {
             const option = document.createElement('option');
             option.value = color;
@@ -104,7 +119,7 @@ class CarValuator {
         this.elements.model.innerHTML = '<option value="">Select Model</option>';
         this.elements.model.disabled = !selectedMake;
 
-        if (selectedMake) {
+        if (selectedMake && carData[selectedMake]) {
             carData[selectedMake].forEach(model => {
                 const option = document.createElement('option');
                 option.value = model;
@@ -160,11 +175,22 @@ class CarValuator {
     }
 
     private validateForm(carInfo: CarInfo): boolean {
-        if (!carInfo.make || !carInfo.model || !carInfo.year || !carInfo.condition || 
-            !carInfo.mileage || !carInfo.state || !carInfo.color || !carInfo.photos.length) {
-            alert('Please fill in all required fields and upload at least one photo.');
+        const errors: string[] = [];
+
+        if (!carInfo.make) errors.push('Please select a car make');
+        if (!carInfo.model) errors.push('Please select a car model');
+        if (!carInfo.year) errors.push('Please select a year');
+        if (!carInfo.condition) errors.push('Please select a condition');
+        if (!carInfo.mileage) errors.push('Please enter mileage');
+        if (!carInfo.state) errors.push('Please select a state');
+        if (!carInfo.color) errors.push('Please select a color');
+        if (!carInfo.photos.length) errors.push('Please upload at least one photo');
+
+        if (errors.length > 0) {
+            alert(errors.join('\n'));
             return false;
         }
+
         return true;
     }
 
@@ -229,7 +255,7 @@ class CarValuator {
     private displayResult(calculation: OfferCalculation): void {
         const deductions: Deduction[] = [
             { description: 'Base Price', amount: calculation.basePrice },
-            { description: '37% Cut', amount: calculation.cutAmount },
+            { description: '37% Cut', amount: calculation.cutAmount, isPercentage: true },
             { description: 'Condition Deduction', amount: calculation.conditionDeduction },
             { description: 'Catalytic Converter Deduction', amount: calculation.catalyticConverterDeduction },
             { description: 'Mileage Deduction', amount: calculation.mileageDeduction }
