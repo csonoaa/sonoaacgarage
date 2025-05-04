@@ -7,6 +7,8 @@
     --border-color: #ddd;
     --success-color: #2ecc71;
     --error-color: #e74c3c;
+    --shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
 }
 
 * {
@@ -30,7 +32,9 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    margin-bottom: 2rem;
 }
 
 nav {
@@ -43,20 +47,24 @@ nav a {
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 4px;
-    transition: background-color 0.3s;
+    transition: var(--transition);
 }
 
 nav a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+nav a.active {
+    background-color: var(--secondary-color);
+}
+
 main {
     max-width: 800px;
-    margin: 2rem auto;
+    margin: 0 auto;
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
 h1, h2, h3 {
@@ -64,10 +72,8 @@ h1, h2, h3 {
     margin-bottom: 1rem;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+.form-group {
+    margin-bottom: 1.5rem;
 }
 
 label {
@@ -76,12 +82,19 @@ label {
     font-weight: bold;
 }
 
-input, select {
+input, select, textarea {
     width: 100%;
     padding: 0.8rem;
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1rem;
+    transition: var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
 }
 
 button {
@@ -93,31 +106,55 @@ button {
     cursor: pointer;
     font-size: 1rem;
     font-weight: bold;
-    transition: background-color 0.3s;
-    margin-top: 1rem;
+    transition: var(--transition);
+    width: 100%;
 }
 
 button:hover {
     background-color: #2980b9;
+    transform: translateY(-2px);
 }
 
-#offerResult {
+.result-card {
     margin-top: 2rem;
-    padding: 1rem;
+    padding: 1.5rem;
     background-color: var(--light-gray);
-    border-radius: 4px;
-    text-align: center;
-    font-size: 1.2rem;
-    color: var(--primary-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
 }
 
-ul {
-    list-style-position: inside;
+.result-card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+.result-card ul {
     margin: 1rem 0;
+    padding-left: 1rem;
 }
 
-ul ul {
-    margin-left: 2rem;
+.result-card li {
+    margin-bottom: 0.5rem;
+}
+
+.photo-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.photo-preview {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.photo-preview:hover {
+    transform: scale(1.05);
 }
 
 /* Responsive Design */
@@ -136,4 +173,31 @@ ul ul {
     main {
         padding: 1rem;
     }
+
+    .photo-preview-container {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none;
+}
+
+.success-message {
+    background-color: var(--success-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.error-message {
+    background-color: var(--error-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-top: 1rem;
+    text-align: center;
 } 

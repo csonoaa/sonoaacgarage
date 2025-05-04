@@ -1,0 +1,22 @@
+export const carData: { [make: string]: string[] } = {
+    "Hyundai": ["Elantra", "Sonata", "Tucson", "Santa Fe", "Kona", "Palisade", "Venue"],
+    "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "Tacoma", "Tundra", "Sienna"],
+    "Honda": ["Civic", "Accord", "CR-V", "Pilot", "Odyssey", "HR-V", "Ridgeline"],
+    "Ford": ["Focus", "Fusion", "Escape", "Explorer", "F-150", "Mustang", "Edge"],
+    "Chevrolet": ["Malibu", "Cruze", "Equinox", "Silverado", "Tahoe", "Traverse", "Camaro"],
+    "Nissan": ["Altima", "Sentra", "Rogue", "Murano", "Pathfinder", "Frontier", "Titan"],
+    "Kia": ["Forte", "Optima", "Sorento", "Telluride", "Sportage", "Soul", "Stinger"],
+    "BMW": ["3 Series", "5 Series", "X3", "X5", "7 Series", "X1", "X7"],
+    "Mercedes": ["C-Class", "E-Class", "GLC", "GLE", "S-Class", "A-Class", "GLA"],
+    "Audi": ["A4", "A6", "Q5", "Q7", "A3", "Q3", "A5"],
+    "Tesla": ["Model 3", "Model S", "Model X", "Model Y"],
+    "Volkswagen": ["Jetta", "Passat", "Tiguan", "Atlas", "Golf", "Arteon", "ID.4"],
+    "Subaru": ["Outback", "Forester", "Crosstrek", "Ascent", "Impreza", "Legacy", "WRX"],
+    "Mazda": ["Mazda3", "Mazda6", "CX-5", "CX-9", "CX-30", "MX-5 Miata", "CX-3"],
+    "Jeep": ["Wrangler", "Grand Cherokee", "Cherokee", "Compass", "Renegade", "Gladiator"],
+    "Lexus": ["ES", "RX", "NX", "GX", "LX", "IS", "UX"],
+    "Dodge": ["Charger", "Challenger", "Durango", "Journey", "Grand Caravan"],
+    "GMC": ["Sierra", "Yukon", "Acadia", "Terrain", "Canyon"],
+    "Volvo": ["S60", "S90", "XC40", "XC60", "XC90", "V60", "V90"],
+    "Land Rover": ["Range Rover", "Range Rover Sport", "Range Rover Velar", "Range Rover Evoque", "Discovery"]
+}; 
