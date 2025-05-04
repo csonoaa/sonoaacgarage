@@ -8,7 +8,7 @@ import {
     Deduction, 
     ResultDisplay 
 } from './types.js';
-import { carData, carPrices, colors } from './data.js';
+import { carData, carPrices, colors, CAR_MAKES, COLORS, TRANSMISSIONS, BODY_TYPES, CONDITIONS, getBasePrice } from './data.js';
 
 class CarValuator {
     private elements: FormElements;
@@ -37,7 +37,7 @@ class CarValuator {
             photos: document.getElementById('photos') as HTMLInputElement,
             photoPreview: document.getElementById('photoPreview') as HTMLDivElement,
             result: document.getElementById('result') as HTMLDivElement,
-            form: document.getElementById('carForm') as HTMLFormElement
+            form: document.getElementById('valuationForm') as HTMLFormElement
         };
 
         // Verify all elements exist
@@ -56,6 +56,8 @@ class CarValuator {
         this.populateConditionDropdown();
         this.populateStateDropdown();
         this.populateColorDropdown();
+        this.populateTransmissionDropdown();
+        this.populateBodyTypeDropdown();
     }
 
     private populateMakeDropdown(): void {
@@ -107,6 +109,26 @@ class CarValuator {
             option.value = color;
             option.textContent = color;
             this.elements.color.appendChild(option);
+        });
+    }
+
+    private populateTransmissionDropdown(): void {
+        this.elements.transmission.innerHTML = '<option value="">Select Transmission</option>';
+        TRANSMISSIONS.forEach(transmission => {
+            const option = document.createElement('option');
+            option.value = transmission;
+            option.textContent = transmission;
+            this.elements.transmission.appendChild(option);
+        });
+    }
+
+    private populateBodyTypeDropdown(): void {
+        this.elements.bodyType.innerHTML = '<option value="">Select Body Type</option>';
+        BODY_TYPES.forEach(bodyType => {
+            const option = document.createElement('option');
+            option.value = bodyType;
+            option.textContent = bodyType;
+            this.elements.bodyType.appendChild(option);
         });
     }
 
@@ -197,7 +219,9 @@ class CarValuator {
             color: this.elements.color.value as Color,
             catalyticConverterPresent: this.elements.catalyticConverter.checked,
             isDrivable: this.elements.drivable.checked,
-            photos: Array.from(this.elements.photos.files || [])
+            photos: Array.from(this.elements.photos.files || []),
+            transmission: this.elements.transmission.value as any,
+            bodyType: this.elements.bodyType.value as any
         };
     }
 
@@ -222,7 +246,7 @@ class CarValuator {
     }
 
     private calculateOffer(carInfo: CarInfo): OfferCalculation {
-        const basePrice = carPrices[carInfo.make][carInfo.model];
+        const basePrice = getBasePrice(carInfo.make, carInfo.model, carInfo.year);
         const cutAmount = basePrice * this.CUT_PERCENTAGE;
         let offer = basePrice - cutAmount;
 

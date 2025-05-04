@@ -1,3 +1,75 @@
+import { Color, Transmission, BodyType, Condition } from './types';
+
+export const CAR_MAKES = [
+    'Toyota', 'Honda', 'Hyundai', 'Ford', 'Chevrolet', 'Nissan',
+    'BMW', 'Mercedes-Benz', 'Audi', 'Kia', 'Subaru', 'Volkswagen',
+    'Jeep', 'Dodge', 'Chrysler', 'GMC', 'Ram', 'Acura', 'Infiniti',
+    'Lexus', 'Mazda', 'Mitsubishi', 'Cadillac', 'Buick', 'Lincoln',
+    'Volvo', 'Tesla'
+];
+
+export const COLORS = Object.values(Color);
+export const TRANSMISSIONS = Object.values(Transmission);
+export const BODY_TYPES = Object.values(BodyType);
+export const CONDITIONS = Object.values(Condition);
+
+// Base market prices for common makes/models (in USD)
+export const MARKET_PRICES: Record<string, Record<string, number>> = {
+    'Toyota': {
+        'Camry': 15000,
+        'Corolla': 12000,
+        'RAV4': 18000,
+        'Highlander': 25000,
+        'Tacoma': 22000,
+        'Tundra': 30000
+    },
+    'Honda': {
+        'Civic': 12000,
+        'Accord': 15000,
+        'CR-V': 18000,
+        'Pilot': 25000,
+        'Odyssey': 22000
+    },
+    'Hyundai': {
+        'Elantra': 10000,
+        'Sonata': 12000,
+        'Tucson': 15000,
+        'Santa Fe': 18000
+    },
+    'Ford': {
+        'F-150': 25000,
+        'Escape': 15000,
+        'Explorer': 20000,
+        'Mustang': 22000,
+        'Focus': 10000
+    },
+    'Chevrolet': {
+        'Silverado': 25000,
+        'Equinox': 15000,
+        'Malibu': 12000,
+        'Tahoe': 30000
+    },
+    'Nissan': {
+        'Altima': 12000,
+        'Rogue': 15000,
+        'Sentra': 10000,
+        'Pathfinder': 20000
+    }
+};
+
+// Year depreciation factor (percentage of base price per year)
+export const YEAR_DEPRECIATION = 0.05; // 5% per year
+
+// Get base price for a make/model/year
+export function getBasePrice(make: string, model: string, year: number): number {
+    const currentYear = new Date().getFullYear();
+    const yearsOld = currentYear - year;
+    const basePrice = MARKET_PRICES[make]?.[model] || 10000; // Default to $10,000 if not found
+    
+    // Apply year depreciation
+    return basePrice * Math.pow(1 - YEAR_DEPRECIATION, yearsOld);
+}
+
 export const carPrices: { [make: string]: { [model: string]: number } } = {
     "Toyota": {
         "Camry": 7000,

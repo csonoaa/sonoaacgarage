@@ -6,6 +6,22 @@ export enum Condition {
     NonDrivable = "Non-Drivable"
 }
 
+export enum Transmission {
+    Automatic = "Automatic",
+    Manual = "Manual"
+}
+
+export enum BodyType {
+    Sedan = "Sedan",
+    SUV = "SUV",
+    Truck = "Truck",
+    Coupe = "Coupe",
+    Wagon = "Wagon",
+    Convertible = "Convertible",
+    Van = "Van",
+    Other = "Other"
+}
+
 export enum State {
     AL = "Alabama",
     AK = "Alaska",
@@ -60,18 +76,16 @@ export enum State {
 }
 
 export enum Color {
-    White = "White",
     Black = "Black",
+    White = "White",
     Silver = "Silver",
     Gray = "Gray",
-    Red = "Red",
     Blue = "Blue",
-    Green = "Green",
+    Red = "Red",
     Brown = "Brown",
-    Beige = "Beige",
+    Green = "Green",
     Gold = "Gold",
-    Orange = "Orange",
-    Yellow = "Yellow"
+    Other = "Other"
 }
 
 export interface CarInfo {
@@ -79,38 +93,36 @@ export interface CarInfo {
     model: string;
     year: number;
     mileage: number;
-    condition: Condition;
     color: Color;
+    transmission: Transmission;
     catalyticConverterPresent: boolean;
-    isDrivable: boolean;
+    bodyType: BodyType;
+    condition: Condition;
     state: State;
     photos: File[];
 }
 
 export interface OfferCalculation {
     basePrice: number;
-    cutAmount: number;
+    companyCut: number;
+    mileageDeduction: number;
     conditionDeduction: number;
     catalyticConverterDeduction: number;
-    mileageDeduction: number;
-    nonDrivableCap: number | null;
     finalOffer: number;
 }
 
 export interface FormElements {
     make: HTMLSelectElement;
-    model: HTMLSelectElement;
+    model: HTMLInputElement;
     year: HTMLSelectElement;
-    condition: HTMLSelectElement;
     mileage: HTMLInputElement;
-    state: HTMLSelectElement;
     color: HTMLSelectElement;
-    catalyticConverter: HTMLInputElement;
-    drivable: HTMLInputElement;
-    photos: HTMLInputElement;
-    photoPreview: HTMLDivElement;
-    result: HTMLDivElement;
+    transmission: HTMLSelectElement;
+    catalyticConverter: HTMLSelectElement;
+    bodyType: HTMLSelectElement;
+    condition: HTMLSelectElement;
     form: HTMLFormElement;
+    result: HTMLDivElement;
 }
 
 export interface Deduction {
