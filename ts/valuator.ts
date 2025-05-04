@@ -14,6 +14,8 @@ class CarValuator {
     private elements: FormElements;
     private readonly CUT_PERCENTAGE = 0.37;
     private readonly NON_DRIVABLE_CAP = 900;
+    private currentMake: string = '';
+    private currentModel: string = '';
 
     constructor() {
         this.elements = this.initializeElements();
@@ -57,7 +59,7 @@ class CarValuator {
     }
 
     private populateMakeDropdown(): void {
-        const makes = Object.keys(carData);
+        const makes = Object.keys(carData).sort();
         this.elements.make.innerHTML = '<option value="">Select Make</option>';
         makes.forEach(make => {
             const option = document.createElement('option');
@@ -70,7 +72,7 @@ class CarValuator {
     private populateYearDropdown(): void {
         const currentYear = new Date().getFullYear();
         this.elements.year.innerHTML = '<option value="">Select Year</option>';
-        for (let year = 2000; year <= currentYear; year++) {
+        for (let year = currentYear; year >= 2000; year--) {
             const option = document.createElement('option');
             option.value = year.toString();
             option.textContent = year.toString();
@@ -90,7 +92,7 @@ class CarValuator {
 
     private populateStateDropdown(): void {
         this.elements.state.innerHTML = '<option value="">Select State</option>';
-        Object.values(State).forEach(state => {
+        Object.values(State).sort().forEach(state => {
             const option = document.createElement('option');
             option.value = state;
             option.textContent = state;
@@ -100,7 +102,7 @@ class CarValuator {
 
     private populateColorDropdown(): void {
         this.elements.color.innerHTML = '<option value="">Select Color</option>';
-        colors.forEach(color => {
+        colors.sort().forEach(color => {
             const option = document.createElement('option');
             option.value = color;
             option.textContent = color;
@@ -110,17 +112,42 @@ class CarValuator {
 
     private setupEventListeners(): void {
         this.elements.make.addEventListener('change', () => this.handleMakeChange());
+        this.elements.make.addEventListener('input', (e) => this.handleTypeAhead(e, 'make'));
+        this.elements.model.addEventListener('input', (e) => this.handleTypeAhead(e, 'model'));
         this.elements.photos.addEventListener('change', (e) => this.handlePhotoUpload(e));
         this.elements.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
     }
 
+    private handleTypeAhead(event: Event, field: 'make' | 'model'): void {
+        const input = event.target as HTMLSelectElement;
+        const searchTerm = input.value.toLowerCase();
+        const options = input.options;
+        
+        // Show all options if search is empty
+        if (!searchTerm) {
+            for (let i = 0; i < options.length; i++) {
+                options[i].style.display = '';
+            }
+            return;
+        }
+
+        // Filter options based on search term
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            const text = option.textContent?.toLowerCase() || '';
+            option.style.display = text.includes(searchTerm) ? '' : 'none';
+        }
+    }
+
     private handleMakeChange(): void {
         const selectedMake = this.elements.make.value;
+        this.currentMake = selectedMake;
         this.elements.model.innerHTML = '<option value="">Select Model</option>';
         this.elements.model.disabled = !selectedMake;
 
         if (selectedMake && carData[selectedMake]) {
-            carData[selectedMake].forEach(model => {
+            const models = carData[selectedMake].sort();
+            models.forEach(model => {
                 const option = document.createElement('option');
                 option.value = model;
                 option.textContent = model;
