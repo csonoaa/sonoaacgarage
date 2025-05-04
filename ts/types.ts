@@ -84,7 +84,45 @@ export interface CarInfo {
     catalyticConverterPresent: boolean;
     isDrivable: boolean;
     state: State;
-    photos?: File[];
+    photos: File[];
+}
+
+export interface OfferCalculation {
+    basePrice: number;
+    cutAmount: number;
+    conditionDeduction: number;
+    catalyticConverterDeduction: number;
+    mileageDeduction: number;
+    nonDrivableCap: number | null;
+    finalOffer: number;
+}
+
+export interface FormElements {
+    make: HTMLSelectElement;
+    model: HTMLSelectElement;
+    year: HTMLSelectElement;
+    condition: HTMLSelectElement;
+    mileage: HTMLInputElement;
+    state: HTMLSelectElement;
+    color: HTMLSelectElement;
+    catalyticConverter: HTMLInputElement;
+    drivable: HTMLInputElement;
+    photos: HTMLInputElement;
+    photoPreview: HTMLDivElement;
+    result: HTMLDivElement;
+    form: HTMLFormElement;
+}
+
+export interface Deduction {
+    description: string;
+    amount: number;
+    isPercentage?: boolean;
+}
+
+export interface ResultDisplay {
+    offer: number;
+    carInfo: CarInfo;
+    deductions: Deduction[];
 }
 
 export interface FormValidation {
