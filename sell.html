@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonoAAC Garage - Car Valuator</title>
+    <title>SonoAAC Garage - Sell My Car</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -11,14 +11,29 @@
         <h1>SonoAAC Garage</h1>
         <nav>
             <a href="index.html">Valuator</a>
-            <a href="sell.html">Sell My Car</a>
+            <a href="sell.html" class="active">Sell My Car</a>
             <a href="offers.html">Price Rules</a>
         </nav>
     </header>
 
     <main>
-        <h2>Get Your Car Offer</h2>
-        <form id="carForm">
+        <h2>Sell Your Car</h2>
+        <form id="sellForm">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+
             <div class="form-group">
                 <label for="make">Make</label>
                 <select id="make" name="make" required>
@@ -96,12 +111,20 @@
                 <input type="number" id="marketPrice" name="marketPrice" min="0" step="0.01" required>
             </div>
 
-            <button type="submit">Get Offer</button>
-        </form>
+            <div class="form-group">
+                <label for="location">Location (City, State)</label>
+                <input type="text" id="location" name="location" required>
+            </div>
 
-        <h3 id="offerResult"></h3>
+            <div class="form-group">
+                <label for="description">Additional Details</label>
+                <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+
+            <button type="submit">Submit for Review</button>
+        </form>
     </main>
 
-    <script src="js/valuator.js"></script>
+    <script src="js/sell.js"></script>
 </body>
 </html> 
