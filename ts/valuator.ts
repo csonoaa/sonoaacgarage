@@ -1,5 +1,5 @@
 import { Condition, State, CarInfo, FormValidation } from './types.js';
-import { carData } from './data.js';
+import { carData, carPrices } from './data.js';
 
 // DOM Elements
 const makeSelect = document.getElementById('make') as HTMLSelectElement;
@@ -71,7 +71,6 @@ function validateForm(form: HTMLFormElement): FormValidation {
     const errors: string[] = [];
     const year = parseInt((form.year as any).value);
     const mileage = parseInt((form.mileage as any).value);
-    const marketPrice = parseFloat((form.marketPrice as any).value);
 
     if (year < 1990 || year > new Date().getFullYear()) {
         errors.push('Please enter a valid year between 1990 and the current year.');
@@ -79,10 +78,6 @@ function validateForm(form: HTMLFormElement): FormValidation {
 
     if (mileage < 0 || mileage > 300000) {
         errors.push('Please enter a valid mileage between 0 and 300,000.');
-    }
-
-    if (marketPrice <= 0 || marketPrice > 1000000) {
-        errors.push('Please enter a valid market price between $0 and $1,000,000.');
     }
 
     if (!form.make.value) {
@@ -97,6 +92,10 @@ function validateForm(form: HTMLFormElement): FormValidation {
         errors.push('Please select your state.');
     }
 
+    if (!photoInput.files || photoInput.files.length === 0) {
+        errors.push('Please upload at least one photo of your car.');
+    }
+
     return {
         isValid: errors.length === 0,
         errors
@@ -105,7 +104,14 @@ function validateForm(form: HTMLFormElement): FormValidation {
 
 // Calculate offer based on car info
 function calculateOffer(car: CarInfo): number {
-    let offer = car.marketPrice * 0.63; // Base 37% cut
+    // Get base price from pricing table
+    const basePrice = carPrices[car.make][car.model];
+    let offer = basePrice;
+
+    // Year depreciation (2% per year)
+    const currentYear = new Date().getFullYear();
+    const yearsOld = currentYear - car.year;
+    offer *= Math.pow(0.98, yearsOld);
 
     // Condition adjustments
     switch (car.condition) {
@@ -183,6 +189,11 @@ function displayResult(car: CarInfo, offer: number): void {
                 </ul>
             ` : ''}
             <p>This offer is valid for 7 days.</p>
+            <div class="photo-preview-container">
+                ${Array.from(photoInput.files || []).map(file => `
+                    <img src="${URL.createObjectURL(file)}" class="photo-preview" alt="Car photo">
+                `).join('')}
+            </div>
         </div>
     `;
 }
@@ -214,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
             condition: (form.condition as any).value as Condition,
             catalyticConverterPresent: (form.converter as any).value === 'yes',
             isDrivable: (form.drivable as any).value === 'yes',
-            marketPrice: parseFloat((form.marketPrice as any).value),
             state: (form.state as any).value as State,
             photos: photoInput.files ? Array.from(photoInput.files) : undefined
         };

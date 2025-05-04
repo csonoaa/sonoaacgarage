@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonoAAC Garage - Sell My Car</title>
+    <title>SonoAAC Garage - Sell Your Car</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -13,118 +13,37 @@
             <a href="index.html">Valuator</a>
             <a href="sell.html" class="active">Sell My Car</a>
             <a href="offers.html">Price Rules</a>
+            <a href="about.html">About</a>
         </nav>
     </header>
 
     <main>
         <h2>Sell Your Car</h2>
-        <form id="sellForm">
-            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" required>
-            </div>
+        <p>Ready to sell your car? We make the process simple and fair. Here's how it works:</p>
+        
+        <ol>
+            <li>Get your instant offer using our valuator tool</li>
+            <li>Schedule an inspection at our location</li>
+            <li>Complete the paperwork</li>
+            <li>Get paid on the spot</li>
+        </ol>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-            </div>
+        <div class="cta-container">
+            <a href="index.html" class="cta-button">Get Your Offer Now</a>
+        </div>
 
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required>
-            </div>
-
-            <div class="form-group">
-                <label for="make">Make</label>
-                <select id="make" name="make" required>
-                    <option value="">Select Make</option>
-                    <option value="toyota">Toyota</option>
-                    <option value="honda">Honda</option>
-                    <option value="ford">Ford</option>
-                    <option value="bmw">BMW</option>
-                    <option value="audi">Audi</option>
-                    <option value="nissan">Nissan</option>
-                    <option value="hyundai">Hyundai</option>
-                    <option value="kia">Kia</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="chevrolet">Chevrolet</option>
-                    <option value="tesla">Tesla</option>
-                    <option value="volkswagen">Volkswagen</option>
-                    <option value="jeep">Jeep</option>
-                    <option value="subaru">Subaru</option>
-                    <option value="lexus">Lexus</option>
-                    <option value="dodge">Dodge</option>
-                    <option value="gmc">GMC</option>
-                    <option value="mazda">Mazda</option>
-                    <option value="volvo">Volvo</option>
-                    <option value="landrover">Land Rover</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="model">Model</label>
-                <input type="text" id="model" name="model" required>
-            </div>
-
-            <div class="form-group">
-                <label for="year">Year</label>
-                <input type="number" id="year" name="year" min="1990" max="2025" required>
-            </div>
-
-            <div class="form-group">
-                <label for="mileage">Mileage</label>
-                <input type="number" id="mileage" name="mileage" min="0" required>
-            </div>
-
-            <div class="form-group">
-                <label for="condition">Condition</label>
-                <select id="condition" name="condition" required>
-                    <option value="">Select Condition</option>
-                    <option value="Great">Great</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
-                    <option value="Bad">Bad</option>
-                    <option value="Non-Drivable">Non-Drivable</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="converter">Catalytic Converter Present</label>
-                <select id="converter" name="converter" required>
-                    <option value="">Select Status</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="drivable">Drivable</label>
-                <select id="drivable" name="drivable" required>
-                    <option value="">Select Status</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="marketPrice">Estimated Market Price ($)</label>
-                <input type="number" id="marketPrice" name="marketPrice" min="0" step="0.01" required>
-            </div>
-
-            <div class="form-group">
-                <label for="location">Location (City, State)</label>
-                <input type="text" id="location" name="location" required>
-            </div>
-
-            <div class="form-group">
-                <label for="description">Additional Details</label>
-                <textarea id="description" name="description" rows="4"></textarea>
-            </div>
-
-            <button type="submit">Submit for Review</button>
-        </form>
+        <section class="benefits">
+            <h3>Why Sell to SonoAAC Garage?</h3>
+            <ul>
+                <li>Fair market value offers</li>
+                <li>No haggling or negotiation</li>
+                <li>Quick and easy process</li>
+                <li>Same-day payment</li>
+                <li>Free towing for non-drivable vehicles</li>
+            </ul>
+        </section>
     </main>
 
-    <script src="js/sell.js"></script>
+    <script type="module" src="js/sell.js"></script>
 </body>
 </html> 

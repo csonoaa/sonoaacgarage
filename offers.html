@@ -13,75 +13,67 @@
             <a href="index.html">Valuator</a>
             <a href="sell.html">Sell My Car</a>
             <a href="offers.html" class="active">Price Rules</a>
+            <a href="about.html">About</a>
         </nav>
     </header>
 
     <main>
-        <h2>How We Calculate Offers</h2>
+        <h2>Our Pricing Rules</h2>
         
-        <section class="rules-section">
-            <h3>Base Price Factors</h3>
-            <ul>
-                <li>Market Price: We start with the estimated market value of your car</li>
-                <li>Make and Model: Different makes and models have different base values</li>
-                <li>Year: Newer cars generally have higher base values</li>
-            </ul>
+        <section class="pricing-rules">
+            <h3>How We Calculate Your Offer</h3>
+            <p>We use a transparent pricing system based on market data and vehicle condition. Here's how it works:</p>
+
+            <div class="rule-card">
+                <h4>Base Price</h4>
+                <p>We start with our base price for your specific make and model, determined by current market data.</p>
+            </div>
+
+            <div class="rule-card">
+                <h4>Year Adjustment</h4>
+                <p>We apply a 2% depreciation per year from the current year.</p>
+            </div>
+
+            <div class="rule-card">
+                <h4>Condition Factors</h4>
+                <ul>
+                    <li>Great: No adjustment</li>
+                    <li>Good: -5%</li>
+                    <li>Fair: -15%</li>
+                    <li>Bad: -30%</li>
+                    <li>Non-Drivable: -50%</li>
+                </ul>
+            </div>
+
+            <div class="rule-card">
+                <h4>Mileage Adjustments</h4>
+                <ul>
+                    <li>0-50,000 miles: No adjustment</li>
+                    <li>50,001-100,000 miles: -5%</li>
+                    <li>100,001-150,000 miles: -10%</li>
+                    <li>150,001-200,000 miles: -20%</li>
+                    <li>200,000+ miles: -30%</li>
+                </ul>
+            </div>
+
+            <div class="rule-card">
+                <h4>Additional Factors</h4>
+                <ul>
+                    <li>Missing Catalytic Converter: -$1,000</li>
+                    <li>Non-Drivable: -20%</li>
+                    <li>High-Value States (CA, NY, TX, FL): +5%</li>
+                </ul>
+            </div>
         </section>
 
-        <section class="rules-section">
-            <h3>Condition Adjustments</h3>
-            <ul>
-                <li>Great Condition: No deductions</li>
-                <li>Good Condition: -5% from base price</li>
-                <li>Fair Condition: -15% from base price</li>
-                <li>Bad Condition: -30% from base price</li>
-                <li>Non-Drivable: -50% from base price</li>
-            </ul>
-        </section>
-
-        <section class="rules-section">
-            <h3>Mileage Adjustments</h3>
-            <ul>
-                <li>0-50,000 miles: No deduction</li>
-                <li>50,001-100,000 miles: -5% from base price</li>
-                <li>100,001-150,000 miles: -10% from base price</li>
-                <li>150,001-200,000 miles: -20% from base price</li>
-                <li>200,001+ miles: -30% from base price</li>
-            </ul>
-        </section>
-
-        <section class="rules-section">
-            <h3>Additional Factors</h3>
-            <ul>
-                <li>Missing Catalytic Converter: -$1,000 from final offer</li>
-                <li>Non-Drivable Status: Additional -20% from final offer</li>
-                <li>Market Demand: Adjustments based on current market conditions</li>
-            </ul>
-        </section>
-
-        <section class="rules-section">
-            <h3>Final Offer Calculation</h3>
-            <p>Our final offer is calculated by:</p>
-            <ol>
-                <li>Starting with the estimated market price</li>
-                <li>Applying condition-based deductions</li>
-                <li>Applying mileage-based deductions</li>
-                <li>Adding any additional factor deductions</li>
-                <li>Adjusting for current market conditions</li>
-            </ol>
-        </section>
-
-        <section class="rules-section">
-            <h3>Important Notes</h3>
-            <ul>
-                <li>All offers are valid for 7 days</li>
-                <li>Final offers may be adjusted after physical inspection</li>
-                <li>We reserve the right to modify offers based on additional information</li>
-                <li>Offers are subject to verification of vehicle condition</li>
-            </ul>
+        <section class="previous-offers">
+            <h3>Recent Offers</h3>
+            <div id="offersList" class="offers-grid">
+                <!-- Offers will be populated by JavaScript -->
+            </div>
         </section>
     </main>
 
-    <script src="js/offers.js"></script>
+    <script type="module" src="js/offers.js"></script>
 </body>
 </html> 

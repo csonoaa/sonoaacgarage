@@ -67,7 +67,6 @@ export interface CarInfo {
     condition: Condition;
     catalyticConverterPresent: boolean;
     isDrivable: boolean;
-    marketPrice: number;
     state: State;
     photos?: File[];
 }

@@ -10,9 +10,10 @@
     <header>
         <h1>SonoAAC Garage</h1>
         <nav>
-            <a href="index.html">Valuator</a>
+            <a href="index.html" class="active">Valuator</a>
             <a href="sell.html">Sell My Car</a>
             <a href="offers.html">Price Rules</a>
+            <a href="about.html">About</a>
         </nav>
     </header>
 
@@ -23,26 +24,6 @@
                 <label for="make">Make</label>
                 <select id="make" name="make" required>
                     <option value="">Select Make</option>
-                    <option value="toyota">Toyota</option>
-                    <option value="honda">Honda</option>
-                    <option value="ford">Ford</option>
-                    <option value="bmw">BMW</option>
-                    <option value="audi">Audi</option>
-                    <option value="nissan">Nissan</option>
-                    <option value="hyundai">Hyundai</option>
-                    <option value="kia">Kia</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="chevrolet">Chevrolet</option>
-                    <option value="tesla">Tesla</option>
-                    <option value="volkswagen">Volkswagen</option>
-                    <option value="jeep">Jeep</option>
-                    <option value="subaru">Subaru</option>
-                    <option value="lexus">Lexus</option>
-                    <option value="dodge">Dodge</option>
-                    <option value="gmc">GMC</option>
-                    <option value="mazda">Mazda</option>
-                    <option value="volvo">Volvo</option>
-                    <option value="landrover">Land Rover</option>
                 </select>
             </div>
 
@@ -94,11 +75,6 @@
             </div>
 
             <div class="form-group">
-                <label for="marketPrice">Estimated Market Price ($)</label>
-                <input type="number" id="marketPrice" name="marketPrice" min="0" step="0.01" required>
-            </div>
-
-            <div class="form-group">
                 <label for="state">State</label>
                 <select id="state" name="state" required>
                     <option value="">Select State</option>
@@ -106,8 +82,8 @@
             </div>
 
             <div class="form-group">
-                <label for="photos">Upload Photos (Optional)</label>
-                <input type="file" id="photos" name="photos" accept="image/*" multiple>
+                <label for="photos">Upload Photos (Required)</label>
+                <input type="file" id="photos" name="photos" accept="image/*" multiple required>
                 <div id="photoPreview" class="photo-preview-container"></div>
             </div>
 
