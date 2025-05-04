@@ -7,6 +7,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/compiler.js"></script>
+    <style>
+        /* Additional styles for improved form inputs */
+        .form-group {
+            position: relative;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+        
+        .form-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .suggestions.show {
+            display: block;
+        }
+        
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .suggestion-item.active {
+            background-color: #e8f5e9;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -30,14 +107,14 @@
             <form id="valuationForm">
                 <div class="form-group">
                     <label for="make">Car Make</label>
-                    <select id="make" required>
-                        <option value="">Select Make</option>
-                    </select>
+                    <input type="text" id="make" required placeholder="Enter car make (e.g., Toyota, Honda)">
+                    <div class="suggestions" id="makeSuggestions"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="model">Car Model</label>
-                    <input type="text" id="model" required placeholder="Enter car model">
+                    <input type="text" id="model" required placeholder="Enter car model (e.g., Camry, Civic)">
+                    <div class="suggestions" id="modelSuggestions"></div>
                 </div>
 
                 <div class="form-group">
@@ -101,5 +178,127 @@
     <footer>
         <p>&copy; 2024 sonoaacgarage. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Type-ahead functionality for make and model inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const makeInput = document.getElementById('make');
+            const modelInput = document.getElementById('model');
+            const makeSuggestions = document.getElementById('makeSuggestions');
+            const modelSuggestions = document.getElementById('modelSuggestions');
+
+            // Sample car makes and models (you can replace with your actual data)
+            const carData = {
+                'Toyota': ['Camry', 'Corolla', 'RAV4', 'Highlander', 'Tacoma'],
+                'Honda': ['Civic', 'Accord', 'CR-V', 'Pilot', 'Fit'],
+                'Ford': ['F-150', 'Escape', 'Explorer', 'Mustang', 'Focus'],
+                'Chevrolet': ['Silverado', 'Equinox', 'Malibu', 'Tahoe'],
+                'Nissan': ['Altima', 'Rogue', 'Sentra', 'Pathfinder']
+            };
+
+            makeInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                const makes = Object.keys(carData);
+                const filteredMakes = makes.filter(make => 
+                    make.toLowerCase().includes(value)
+                );
+                
+                showSuggestions(makeSuggestions, filteredMakes);
+            });
+
+            makeInput.addEventListener('focus', function() {
+                if (this.value === '') {
+                    showSuggestions(makeSuggestions, Object.keys(carData));
+                }
+            });
+
+            makeInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    makeSuggestions.classList.remove('show');
+                }, 200);
+            });
+
+            modelInput.addEventListener('input', function() {
+                const make = makeInput.value;
+                if (carData[make]) {
+                    const value = this.value.toLowerCase();
+                    const filteredModels = carData[make].filter(model => 
+                        model.toLowerCase().includes(value)
+                    );
+                    showSuggestions(modelSuggestions, filteredModels);
+                }
+            });
+
+            function showSuggestions(container, items) {
+                container.innerHTML = '';
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = item;
+                    div.addEventListener('click', function() {
+                        if (container === makeSuggestions) {
+                            makeInput.value = item;
+                            modelInput.value = '';
+                        } else {
+                            modelInput.value = item;
+                        }
+                        container.classList.remove('show');
+                    });
+                    container.appendChild(div);
+                });
+                container.classList.add('show');
+            }
+
+            // Populate year dropdown
+            const yearSelect = document.getElementById('year');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 1990; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+
+            // Populate color dropdown
+            const colors = ['Black', 'White', 'Silver', 'Gray', 'Blue', 'Red', 'Brown', 'Green', 'Gold', 'Other'];
+            const colorSelect = document.getElementById('color');
+            colors.forEach(color => {
+                const option = document.createElement('option');
+                option.value = color;
+                option.textContent = color;
+                colorSelect.appendChild(option);
+            });
+
+            // Populate transmission dropdown
+            const transmissions = ['Automatic', 'Manual'];
+            const transmissionSelect = document.getElementById('transmission');
+            transmissions.forEach(transmission => {
+                const option = document.createElement('option');
+                option.value = transmission;
+                option.textContent = transmission;
+                transmissionSelect.appendChild(option);
+            });
+
+            // Populate body type dropdown
+            const bodyTypes = ['Sedan', 'SUV', 'Truck', 'Coupe', 'Wagon', 'Convertible', 'Van', 'Other'];
+            const bodyTypeSelect = document.getElementById('bodyType');
+            bodyTypes.forEach(bodyType => {
+                const option = document.createElement('option');
+                option.value = bodyType;
+                option.textContent = bodyType;
+                bodyTypeSelect.appendChild(option);
+            });
+
+            // Populate condition dropdown
+            const conditions = ['Great', 'Good', 'Fair', 'Bad', 'Non-Drivable'];
+            const conditionSelect = document.getElementById('condition');
+            conditions.forEach(condition => {
+                const option = document.createElement('option');
+                option.value = condition;
+                option.textContent = condition;
+                conditionSelect.appendChild(option);
+            });
+        });
+    </script>
 </body>
 </html> 
